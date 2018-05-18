@@ -26,15 +26,6 @@ public class PhysicsSprite extends Sprite {
         InitializeBody(canMove);
     }
 
-    public PhysicsSprite(String name,Texture texture, Level wrld, float x, float y, boolean canMove){
-        super(texture);
-        this.name = name;
-        this.world = wrld.getWorld();
-        setPosition(x,y);
-        setOrigin(getWidth()/2,getHeight()/2);
-        InitializeBody(canMove);
-    }
-
     protected void InitializeBody(boolean cm){
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(getWidth()/2f/GameMain.PPM,getHeight()/2f/GameMain.PPM);
@@ -68,9 +59,5 @@ public class PhysicsSprite extends Sprite {
     public void draw(Batch batch){
         updateSprite();
         super.draw(batch);
-    }
-
-    public  void setPos(float x, float y){
-
     }
 }

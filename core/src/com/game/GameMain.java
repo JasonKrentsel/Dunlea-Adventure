@@ -1,9 +1,8 @@
 package com.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.game.Levels.TestLevel;
+import com.game.TesterLvl.TestLevel;
 
 public class GameMain extends Game {
 	public static final int WIDTH = 1920;
