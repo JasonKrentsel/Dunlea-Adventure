@@ -49,7 +49,8 @@ public class TileMap {
         fd.density = 1;
         fd.friction = 1;
         fd.shape = shape;
-        body.createFixture(fd);
+        Fixture f = body.createFixture(fd);
+        f.setUserData("TileBox");
         shape.dispose();
     }
 

@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.game.Entities.Player;
+import com.game.LevelManagment.CollisionManager;
+import com.game.PlayerManager.Player;
 import com.game.GameMain;
 import com.game.LevelManagment.TileMap;
 
@@ -19,10 +20,9 @@ public class TestLevel implements Screen {
     SpriteBatch batch;
     World world;
     Player p;
-
-    Texture tileT = new Texture("tile.png");
-
     TileMap tileMap;
+
+    CollisionManager cm;
 
     public TestLevel(GameMain g){
         game = g;
@@ -32,6 +32,7 @@ public class TestLevel implements Screen {
         world = new World(new Vector2(0,-98f),true);
         tileMap = new TileMap("Levels/lvl.tmx",world);
         p = new Player(world,GameMain.WIDTH/2+1,200);
+        cm = new CollisionManager(p.state);
     }
     
     @Override

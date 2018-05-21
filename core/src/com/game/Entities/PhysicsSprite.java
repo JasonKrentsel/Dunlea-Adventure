@@ -13,9 +13,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
 public class PhysicsSprite extends Sprite {
-    World world;
-    public Body body;
-    String name;
+    protected World world;
+    protected Body body;
+    protected String name;
 
     public PhysicsSprite(String name,Texture texture, World PhysicsWorld, float x, float y, boolean canMove){
         super(texture);

@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.backgroundFPS = 120;
 		config.foregroundFPS = 120;
-		config.fullscreen = true;
+		config.fullscreen = false;
 		config.width = GameMain.WIDTH;
 		config.height = GameMain.HEIGHT;
 
