@@ -62,12 +62,9 @@ public class Player extends PhysicsSprite {
     boolean wasRight = true;
     private void move(){
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && canJump()){
-            super.body.setLinearVelocity(body.getLinearVelocity().x,20);
+            super.body.setLinearVelocity(body.getLinearVelocity().x,10);
+            state.bottem = false;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-            super.body.setLinearVelocity(body.getLinearVelocity().x,-10);
-        }
-
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 

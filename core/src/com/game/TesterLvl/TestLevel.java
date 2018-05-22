@@ -35,7 +35,7 @@ public class TestLevel implements Screen {
         batch = g.batch;
         camera.position.y += GameMain.HEIGHT/2;
         batch.setProjectionMatrix(camera.combined);
-        world = new World(new Vector2(0,-98f),true);
+        world = new World(new Vector2(0,-9.8f*1.5f),true);
         tileMap = new TileMap("Levels/lvl.tmx",world);
         p = new Player(world,GameMain.WIDTH/2+1,200);
 
