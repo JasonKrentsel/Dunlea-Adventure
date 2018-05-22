@@ -20,9 +20,11 @@ public class Player extends PhysicsSprite {
     private final Animation<Texture> runLeft = new Animation<Texture>(.11f,new Texture[]{new Texture("dunlea/moveLeft/F0.png"),new Texture("dunlea/moveLeft/F1.png"),new Texture("dunlea/moveLeft/F2.png")});
     public PlayerSensorState state = new PlayerSensorState();
 
+    SideSensor bottem;
+
     public Player(World world, float x, float y) {
         super("Player", new Texture("dunlea/idleRight/F0.png"), world, x, y, true);
-        new SideSensor(this,Side.Bottem);
+        bottem = new SideSensor(this,Side.Bottem);
     }
 
     @Override
@@ -50,11 +52,11 @@ public class Player extends PhysicsSprite {
 
     @Override
     public void draw(Batch batch){
-        //System.out.println(state.bottem);
-
         elapsed += Gdx.graphics.getDeltaTime();
         super.draw(batch);
         move();
+
+        bottem.updatePos();
     }
 
     boolean wasRight = true;
@@ -106,6 +108,6 @@ public class Player extends PhysicsSprite {
     }
 
     private boolean canJump(){
-        return body.getLinearVelocity().y<0.001 && body.getLinearVelocity().y>-0.001;
+        return state.bottem;
     }
 }

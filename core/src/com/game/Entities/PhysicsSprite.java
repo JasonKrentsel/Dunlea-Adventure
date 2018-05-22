@@ -14,7 +14,7 @@ import com.game.GameMain;
 
 public class PhysicsSprite extends Sprite {
     protected World world;
-    protected Body body;
+    public Body body;
     protected String name;
 
     public PhysicsSprite(String name,Texture texture, World PhysicsWorld, float x, float y, boolean canMove){

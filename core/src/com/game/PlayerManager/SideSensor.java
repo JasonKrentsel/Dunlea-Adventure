@@ -31,7 +31,22 @@ public class SideSensor {
         switch (side){
             case Bottem:
                 w = player.getWidth()-2;
-                h = 4;
+                h = 1;
+                shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
+                break;
+            case Top:
+                w = player.getWidth()-2;
+                h = 1;
+                shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
+                break;
+            case Left:
+                w = 1;
+                h = player.getHeight()-2;
+                shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
+                break;
+            case Right:
+                w = 1;
+                h = player.getHeight()-2;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
         }
@@ -40,11 +55,23 @@ public class SideSensor {
         switch (side){
             case Bottem:
                 x = player.getX()+1;
-                y = player.getY()-w/2;
-                bd.position.set((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM);
+                y = player.getY()-h;
+                break;
+            case Top:
+                x = player.getX()+1;
+                y = player.getY()+player.getHeight();
+                break;
+            case Left:
+                x = player.getX()-w;
+                y = player.getY()+1;
+                break;
+            case Right:
+                x = player.getX()+player.getWidth();
+                y = player.getY()+1;
                 break;
         }
-        bd.type = BodyDef.BodyType.StaticBody;
+        bd.position.set((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM);
+        bd.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bd);
 
@@ -52,9 +79,9 @@ public class SideSensor {
         fd.density = 1;
         fd.friction = 1;
         fd.shape = shape;
-        fd.isSensor = true;
+        fd.isSensor = false;
         Fixture fixture = body.createFixture(fd);
-        fixture.setUserData("Sensor:"+side.toString());
+        fixture.setUserData(side);
         shape.dispose();
     }
 
@@ -62,9 +89,21 @@ public class SideSensor {
         switch (side){
             case Bottem:
                 x = player.getX()+1;
-                y = player.getY()-w/2;
+                y = player.getY()-h;
+                break;
+            case Top:
+                x = player.getX()+1;
+                y = player.getY()+player.getHeight();
+                break;
+            case Left:
+                x = player.getX()-w;
+                y = player.getY()+1;
+                break;
+            case Right:
+                x = player.getX()+player.getWidth();
+                y = player.getY()+1;
                 break;
         }
-        body.getPosition().set((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM);
+        body.setTransform((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM,0);
     }
 }
