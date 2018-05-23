@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -13,18 +14,27 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.game.Entities.PhysicsSprite;
 import com.game.GameMain;
 
+import java.util.ArrayList;
+
 public class Player extends PhysicsSprite {
-    private final Animation<Texture> haltRight = new Animation<Texture>(.21f,new Texture[]{new Texture("dunlea/idleRight/F0.png"), new Texture("dunlea/idleRight/F1.png")});
-    private final Animation<Texture> haltLeft = new Animation<Texture>(.21f,new Texture[]{new Texture("dunlea/idleLeft/F0.png"), new Texture("dunlea/idleLeft/F1.png")});
-    private final Animation<Texture> runRight = new Animation<Texture>(.11f,new Texture[]{new Texture("dunlea/moveRight/F0.png"),new Texture("dunlea/moveRight/F1.png"),new Texture("dunlea/moveRight/F2.png")});
-    private final Animation<Texture> runLeft = new Animation<Texture>(.11f,new Texture[]{new Texture("dunlea/moveLeft/F0.png"),new Texture("dunlea/moveLeft/F1.png"),new Texture("dunlea/moveLeft/F2.png")});
+    private final Animation<Texture> haltRight = new Animation<Texture>(.21f,new Texture("dunlea/idleRight/F0.png"), new Texture("dunlea/idleRight/F1.png"));
+    private final Animation<Texture> haltLeft = new Animation<Texture>(.21f,new Texture("dunlea/idleLeft/F0.png"), new Texture("dunlea/idleLeft/F1.png"));
+    private final Animation<Texture> runRight = new Animation<Texture>(.11f,new Texture("dunlea/moveRight/F0.png"),new Texture("dunlea/moveRight/F1.png"),new Texture("dunlea/moveRight/F2.png"));
+    private final Animation<Texture> runLeft = new Animation<Texture>(.11f,new Texture("dunlea/moveLeft/F0.png"),new Texture("dunlea/moveLeft/F1.png"),new Texture("dunlea/moveLeft/F2.png"));
+    private final Texture slideRight = new Texture("dunlea/slide/slideRight.png");
+    private final Texture slideLeft = new Texture("dunlea/slide/slideLeft.png");
+
     public PlayerSensorState state = new PlayerSensorState();
 
-    SideSensor bottem;
+    ArrayList<SideSensor> sensors;
 
     public Player(World world, float x, float y) {
         super("Player", new Texture("dunlea/idleRight/F0.png"), world, x, y, true);
-        bottem = new SideSensor(this,Side.Bottem);
+        sensors = new ArrayList<SideSensor>();
+        sensors.add(new SideSensor(this,Side.Bottem));
+        sensors.add(new SideSensor(this,Side.Top));
+        sensors.add(new SideSensor(this,Side.Left));
+        sensors.add(new SideSensor(this,Side.Right));
     }
 
     @Override
@@ -49,23 +59,24 @@ public class Player extends PhysicsSprite {
     }
 
     float elapsed = 0;
-
     @Override
     public void draw(Batch batch){
         elapsed += Gdx.graphics.getDeltaTime();
         super.draw(batch);
         move();
-
-        bottem.updatePos();
+        for(SideSensor s : sensors){
+            s.updatePos();
+        }
     }
 
     boolean wasRight = true;
     private void move(){
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && canJump()){
             super.body.setLinearVelocity(body.getLinearVelocity().x,10);
-            state.bottem = false;
         }
-
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            super.body.setLinearVelocity(body.getLinearVelocity().x,-10);
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 
             if(wasRight) {
@@ -77,12 +88,12 @@ public class Player extends PhysicsSprite {
 
             body.setLinearVelocity(0,body.getLinearVelocity().y);
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !state.right){
             wasRight = true;
             setTexture(runRight.getKeyFrame(elapsed,true));
             body.setLinearVelocity(7,body.getLinearVelocity().y);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !state.left){
             wasRight = false;
             setTexture(runLeft.getKeyFrame(elapsed,true));
             body.setLinearVelocity(-7,body.getLinearVelocity().y);
