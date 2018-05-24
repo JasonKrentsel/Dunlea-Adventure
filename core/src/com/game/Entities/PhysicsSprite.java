@@ -13,9 +13,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
 public class PhysicsSprite extends Sprite {
-    protected World world;
-    public Body body;
-    protected String name;
+    protected World world;      // physics word to put the body into, initialized in a class that interfaces Screen
+    public Body body;           // the physics body of the sprite, used in other classes, but is useless here
+    protected String name;      // string to input as userdata for a the fixture of the body, which is used for distinguishing collisions
 
     public PhysicsSprite(String name,Texture texture, World PhysicsWorld, float x, float y, boolean canMove){
         super(texture);
@@ -26,13 +26,17 @@ public class PhysicsSprite extends Sprite {
         InitializeBody(canMove);
     }
 
+    /**
+     * Initializes the body based on the texture size.
+     * Often overwritten by child classes
+     * @param cm
+     */
     protected void InitializeBody(boolean cm){
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(getWidth()/2f/GameMain.PPM,getHeight()/2f/GameMain.PPM);
 
         BodyDef bd = new BodyDef();
         bd.position.set((getX()-GameMain.WIDTH/2+getWidth()/2)/GameMain.PPM,(getY()-GameMain.HEIGHT/2+getHeight()/2)/GameMain.PPM);
-
         if(cm) {
             bd.type = BodyDef.BodyType.DynamicBody;
         }else{
@@ -50,11 +54,18 @@ public class PhysicsSprite extends Sprite {
         shape.dispose();
     }
 
+    /**
+     * Updates the sprites position and rotation based on the body
+     */
     private void updateSprite(){
         setPosition((body.getPosition().x)*GameMain.PPM+GameMain.WIDTH/2-getWidth()/2,(body.getPosition().y)*GameMain.PPM+GameMain.HEIGHT/2-getHeight()/2);
         setRotation((float)Math.toDegrees((double) body.getAngle()));
     }
 
+    /**
+     * Draws the sprite, but updates position before doing so
+     * @param batch
+     */
     @Override
     public void draw(Batch batch){
         updateSprite();

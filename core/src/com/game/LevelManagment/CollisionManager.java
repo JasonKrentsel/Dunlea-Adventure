@@ -5,20 +5,22 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.World;
-import com.game.PlayerManager.PlayerSensorState;
+import com.game.PlayerManager.SensorStates;
 import com.game.PlayerManager.Side;
 
 public class CollisionManager implements ContactListener{
 
-    PlayerSensorState playerState;
+    SensorStates playerState;
 
-    public CollisionManager(PlayerSensorState state){
+    public CollisionManager(SensorStates state){
         playerState = state;
     }
 
     @Override
     public void beginContact(Contact contact) {
+        /**
+         * TO CHANGE WHEN ADDING SENSORS TO ENEMY ENTITIES
+         */
         if((contact.getFixtureA().getUserData() instanceof Side || contact.getFixtureB().getUserData() instanceof Side) && !(contact.getFixtureA().getUserData() instanceof Side && contact.getFixtureB().getUserData() instanceof Side))
             proccesPlayerSensor(true,contact);
 
@@ -26,6 +28,9 @@ public class CollisionManager implements ContactListener{
 
     @Override
     public void endContact(Contact contact) {
+        /**
+         * TO CHANGE WHEN ADDING SENSORS TO ENEMY ENTITIES
+         */
         if((contact.getFixtureA().getUserData() instanceof Side || contact.getFixtureB().getUserData() instanceof Side) && !(contact.getFixtureA().getUserData() instanceof Side && contact.getFixtureB().getUserData() instanceof Side))
             proccesPlayerSensor(false,contact);
     }
@@ -40,7 +45,16 @@ public class CollisionManager implements ContactListener{
 
     }
 
-    public void proccesPlayerSensor(boolean beginContact,Contact contact){
+
+    /**
+     * processes the sensor state of the player when a collision had occurred
+     *
+     *      TO CHANGE WHEN ADDING SENSORS TO ENEMY ENTITIES
+     *
+     * @param beginContact
+     * @param contact
+     */
+    private void proccesPlayerSensor(boolean beginContact,Contact contact){
         Fixture sensor;
         Fixture other;
         if(contact.getFixtureA().getUserData() instanceof Side){

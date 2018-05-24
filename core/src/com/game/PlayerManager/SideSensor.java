@@ -10,46 +10,55 @@ import com.game.Entities.PhysicsSprite;
 import com.game.GameMain;
 
 public class SideSensor {
-    protected final World world;
-    protected Body body;
-    protected final Side side;
-    protected PhysicsSprite player;
-    protected float x;
-    protected float y;
-    protected float w;
-    protected float h;
+    protected final World world;    // the PhysicsSprite's world
+    protected Body body;            // the body of the sensor
+    protected final Side side;      // side of the sprite the sensor will go on
+    protected PhysicsSprite sprite; // the sprite to put the sensor on
+    protected float x;              // x position
+    protected float y;              // y position
+    protected float w;              // width of the sensor
+    protected float h;              // height of the sensor
 
-    private int thicc = 1;
-
-    public SideSensor(Player player, Side side){
-        this.player = player;
-        this.world = player.getWorld();
+    /**
+     * Creates a sensor on the given side of the given sprite.
+     * @param sprite
+     * @param side
+     */
+    public SideSensor(PhysicsSprite sprite, Side side){
+        this.sprite = sprite;
+        this.world = sprite.body.getWorld();
         this.side = side;
         InitializeBody();
         updatePos();
     }
 
-    protected void InitializeBody(){
+    /**
+     * Initializes the body of the sensor.
+     * Not a normal body but a sensor.
+     * Sensor: No collision between other bodyies, but reports them the same to the CollisionManager.
+     * Creates the shape based on given side.
+     */
+    private void InitializeBody(){
         PolygonShape shape = new PolygonShape();
         switch (side){
             case Bottem:
-                w = player.getWidth()-2;
-                h = thicc;
+                w = sprite.getWidth()-2;
+                h = 1;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
             case Top:
-                w = player.getWidth()-2;
-                h = thicc;
+                w = sprite.getWidth()-2;
+                h = 1;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
             case Left:
-                w = thicc;
-                h = player.getHeight()-30;
+                w = 1;
+                h = sprite.getHeight()-10;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
             case Right:
-                w = thicc;
-                h = player.getHeight()-30;
+                w = 1;
+                h = sprite.getHeight()-10;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
         }
@@ -71,28 +80,34 @@ public class SideSensor {
         shape.dispose();
     }
 
+    /**
+     * Updates the x and y variables that based on which side the sensor is.
+     */
     private void updateXY(){
         switch (side){
             case Bottem:
-                x = player.getX()+1;
-                y = player.getY()-h;
+                x = sprite.getX()+1;
+                y = sprite.getY()-h;
                 break;
             case Top:
-                x = player.getX()+1;
-                y = player.getY()+player.getHeight();
+                x = sprite.getX()+1;
+                y = sprite.getY()+sprite.getHeight();
                 break;
             case Left:
-                x = player.getX()-w;
-                y = player.getY()+15;
+                x = sprite.getX()-w;
+                y = sprite.getY()+5;
                 break;
             case Right:
-                x = player.getX()+player.getWidth();
-                y = player.getY()+15;
+                x = sprite.getX()+sprite.getWidth();
+                y = sprite.getY()+5;
                 break;
         }
 
     }
 
+    /**
+     * updates x and y, and uses them to update the actual position of the sensor.
+     */
     public void updatePos(){
         updateXY();
         body.setTransform((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM,0);

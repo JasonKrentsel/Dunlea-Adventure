@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -17,6 +16,9 @@ import com.game.GameMain;
 import java.util.ArrayList;
 
 public class Player extends PhysicsSprite {
+    /**
+     * various animations and textures for Dunlea in certain situations
+     */
     private final Animation<Texture> haltRight = new Animation<Texture>(.21f,new Texture("dunlea/idleRight/F0.png"), new Texture("dunlea/idleRight/F1.png"));
     private final Animation<Texture> haltLeft = new Animation<Texture>(.21f,new Texture("dunlea/idleLeft/F0.png"), new Texture("dunlea/idleLeft/F1.png"));
     private final Animation<Texture> runRight = new Animation<Texture>(.11f,new Texture("dunlea/moveRight/F0.png"),new Texture("dunlea/moveRight/F1.png"),new Texture("dunlea/moveRight/F2.png"));
@@ -24,10 +26,19 @@ public class Player extends PhysicsSprite {
     private final Texture slideRight = new Texture("dunlea/slide/slideRight.png");
     private final Texture slideLeft = new Texture("dunlea/slide/slideLeft.png");
 
-    public PlayerSensorState state = new PlayerSensorState();
+    private float elapsed = 0;                                      // elapsed time used for animation timing
 
-    ArrayList<SideSensor> sensors;
+    public SensorStates sensorState = new SensorStates();           // pointer to the sensor states that are passed to and edited by the CollisionManager
+    private ArrayList<SideSensor> sensors;                          // list of sensors(4), cleaner looking code rather than having 4 lines dedicated for updating their position
 
+    /**
+     * Creates player with Sensors.
+     * Initializes the sprite with Dunlea's right-side idle frame 0 texture.
+     * Which is 27x42.
+     * @param world
+     * @param x
+     * @param y
+     */
     public Player(World world, float x, float y) {
         super("Player", new Texture("dunlea/idleRight/F0.png"), world, x, y, true);
         sensors = new ArrayList<SideSensor>();
@@ -37,6 +48,11 @@ public class Player extends PhysicsSprite {
         sensors.add(new SideSensor(this,Side.Right));
     }
 
+    /**
+     * Creates player hitbox.
+     * Overwritten from PhysicsSprite for creating the body just right
+     * @param cm
+     */
     @Override
     protected void InitializeBody(boolean cm){
         PolygonShape shape = new PolygonShape();
@@ -58,7 +74,13 @@ public class Player extends PhysicsSprite {
         shape.dispose();
     }
 
-    float elapsed = 0;
+    /**
+     * draws Dunlea's correct texture as well as:
+     *      updating elapsed time
+     *      calling the move() method for taking in controls and giving velocity updates
+     *      updating the sensors' positions to correctly correlate with Dunlea
+     * @param batch
+     */
     @Override
     public void draw(Batch batch){
         elapsed += Gdx.graphics.getDeltaTime();
@@ -69,53 +91,71 @@ public class Player extends PhysicsSprite {
         }
     }
 
-    boolean wasRight = true;
+    boolean wasRight = true; // used for changing Dunlea to face right or left while idle
+
+    /**
+     * Change Dunlea's velocity based on user's input
+     */
     private void move(){
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && canJump()){
+        // Jump
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && sensorState.bottem){
             super.body.setLinearVelocity(body.getLinearVelocity().x,10);
         }
+        // Quick Fall
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             super.body.setLinearVelocity(body.getLinearVelocity().x,-10);
         }
+
+        // don't move if both right and left are pressed
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-
-            if(wasRight) {
-                setTexture(haltRight.getKeyFrame(elapsed, true));
+            // if on ground change Dunlea to the correct idle animation
+            // else make him the jumping texture
+            if(sensorState.bottem) {
+                if (wasRight) {
+                    setTexture(haltRight.getKeyFrame(elapsed, true));
+                } else {
+                    setTexture(haltLeft.getKeyFrame(elapsed, true));
+                }
+            } else {
+                // set texture to jumping
             }
-            else {
-                setTexture(haltLeft.getKeyFrame(elapsed, true));
-            }
-
             body.setLinearVelocity(0,body.getLinearVelocity().y);
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !state.right){
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !sensorState.right){
             wasRight = true;
-            setTexture(runRight.getKeyFrame(elapsed,true));
+            // if on ground change Dunlea to the right run animation
+            // else make him the jumping texture
+            if(sensorState.bottem) {
+                setTexture(runRight.getKeyFrame(elapsed, true));
+            }else{
+                // set texture to jumping
+            }
             body.setLinearVelocity(7,body.getLinearVelocity().y);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !state.left){
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !sensorState.left){
             wasRight = false;
-            setTexture(runLeft.getKeyFrame(elapsed,true));
+            // if on ground change Dunlea to the left run animation
+            // else make him the jumping texture
+            if(sensorState.bottem) {
+                setTexture(runLeft.getKeyFrame(elapsed, true));
+            }else{
+                // set texture to jumping
+            }
             body.setLinearVelocity(-7,body.getLinearVelocity().y);
         }
+        // if the user isn't pressing anything
         else{
-
-            if(wasRight) {
-                setTexture(haltRight.getKeyFrame(elapsed, true));
+            // if on ground change Dunlea to the correct idle animation
+            // else make him the jumping texture
+            if(sensorState.bottem) {
+                if (wasRight) {
+                    setTexture(haltRight.getKeyFrame(elapsed, true));
+                } else {
+                    setTexture(haltLeft.getKeyFrame(elapsed, true));
+                }
             }
-            else {
-                setTexture(haltLeft.getKeyFrame(elapsed, true));
-            }
-
+            // halt velocity
             body.setLinearVelocity(0,body.getLinearVelocity().y);
         }
-    }
-
-    public World getWorld(){
-        return  world;
-    }
-
-    private boolean canJump(){
-        return state.bottem;
     }
 }

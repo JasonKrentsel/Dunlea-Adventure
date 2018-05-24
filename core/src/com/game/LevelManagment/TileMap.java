@@ -14,6 +14,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
+/**
+ * simplifies drawing tilemaps and creating hitboxes, does both at the same time
+ */
 public class TileMap {
     TiledMap map;
     OrthogonalTiledMapRenderer renderer;
@@ -24,6 +27,11 @@ public class TileMap {
         createBodies(world);
     }
 
+    /**
+     * Finds rectangle map objects inside of the tilemap
+     * and feeds them into initializeBody()
+     * @param world
+     */
     private void createBodies(World world){
         RectangleMapObject rect;
         for(MapObject mapObject : map.getLayers().get("Col").getObjects()){
@@ -34,7 +42,13 @@ public class TileMap {
         }
     }
 
-    protected void initializeBody(World world, RectangleMapObject rectangleMapObject){
+    /**
+     * Method used for creating the hitboxes of the tile map.
+     * Uses rectangle map objects created in Tiled(tile map editor).
+     * @param world
+     * @param rectangleMapObject
+     */
+    private void initializeBody(World world, RectangleMapObject rectangleMapObject){
         com.badlogic.gdx.math.Rectangle rect = rectangleMapObject.getRectangle();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(rect.getWidth()/2f/ GameMain.PPM,rect.getHeight()/2f/GameMain.PPM);
@@ -54,6 +68,10 @@ public class TileMap {
         shape.dispose();
     }
 
+    /**
+     * Responsible for rendering the textured tiles of the tilemap onto the screen
+     * @param camera
+     */
     public void render(OrthographicCamera camera){
         renderer.setView(camera);
         renderer.render();
