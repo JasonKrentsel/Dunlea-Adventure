@@ -34,7 +34,7 @@ public class TestLevel implements Screen {
 
         // creating physics world and the tile map
         world = new World(new Vector2(0,-9.8f*1.5f),true);
-        tileMap = new TileMap("Levels/lvl.tmx",world);
+        tileMap = new TileMap("Levels/Tester/lvl.tmx",world);
         // creating player
         p = new Player(world,GameMain.WIDTH/2+1,200);
         // creating global collision manager

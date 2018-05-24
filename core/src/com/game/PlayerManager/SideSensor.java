@@ -51,14 +51,24 @@ public class SideSensor {
                 h = 1;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
-            case Left:
+            case TopLeft:
                 w = 1;
-                h = sprite.getHeight()-10;
+                h = sprite.getHeight()/5;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
-            case Right:
+            case TopRight:
                 w = 1;
-                h = sprite.getHeight()-10;
+                h = sprite.getHeight()/5;
+                shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
+                break;
+            case BottemLeft:
+                w = 1;
+                h = sprite.getHeight()/5;
+                shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
+                break;
+            case BottemRight:
+                w = 1;
+                h = sprite.getHeight()/5;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
         }
@@ -93,16 +103,23 @@ public class SideSensor {
                 x = sprite.getX()+1;
                 y = sprite.getY()+sprite.getHeight();
                 break;
-            case Left:
+            case TopLeft:
                 x = sprite.getX()-w;
-                y = sprite.getY()+5;
+                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5;
                 break;
-            case Right:
+            case TopRight:
                 x = sprite.getX()+sprite.getWidth();
-                y = sprite.getY()+5;
+                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5;
+                break;
+            case BottemLeft:
+                x = sprite.getX()-w;
+                y = sprite.getY()+3;
+                break;
+            case BottemRight:
+                x = sprite.getX()+sprite.getWidth();
+                y = sprite.getY()+3;
                 break;
         }
-
     }
 
     /**

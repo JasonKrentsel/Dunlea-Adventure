@@ -25,6 +25,8 @@ public class Player extends PhysicsSprite {
     private final Animation<Texture> runLeft = new Animation<Texture>(.11f,new Texture("dunlea/moveLeft/F0.png"),new Texture("dunlea/moveLeft/F1.png"),new Texture("dunlea/moveLeft/F2.png"));
     private final Texture slideRight = new Texture("dunlea/slide/slideRight.png");
     private final Texture slideLeft = new Texture("dunlea/slide/slideLeft.png");
+    private final Texture jumpRight = new Texture("dunlea/jump/jumpRight.png");
+    private final Texture jumpLeft = new Texture("dunlea/jump/jumpLeft.png");
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
 
@@ -44,8 +46,11 @@ public class Player extends PhysicsSprite {
         sensors = new ArrayList<SideSensor>();
         sensors.add(new SideSensor(this,Side.Bottem));
         sensors.add(new SideSensor(this,Side.Top));
-        sensors.add(new SideSensor(this,Side.Left));
-        sensors.add(new SideSensor(this,Side.Right));
+        sensors.add(new SideSensor(this,Side.TopLeft));
+        sensors.add(new SideSensor(this,Side.TopRight));
+        sensors.add(new SideSensor(this,Side.BottemRight));
+        sensors.add(new SideSensor(this,Side.BottemLeft));
+
     }
 
     /**
@@ -92,18 +97,34 @@ public class Player extends PhysicsSprite {
     }
 
     boolean wasRight = true; // used for changing Dunlea to face right or left while idle
-
+    boolean isGrabbing = false;
     /**
      * Change Dunlea's velocity based on user's input
      */
     private void move(){
         // Jump
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && sensorState.bottem){
+        if(Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem || isGrabbing)){
             super.body.setLinearVelocity(body.getLinearVelocity().x,10);
         }
         // Quick Fall
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             super.body.setLinearVelocity(body.getLinearVelocity().x,-10);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && sensorState.topRight && !sensorState.bottem){
+            setTexture(slideRight);
+            body.setLinearVelocity(body.getLinearVelocity().x,-2);
+            isGrabbing = true;
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && sensorState.topLeft && !sensorState.bottem){
+            setTexture(slideLeft);
+            body.setLinearVelocity(body.getLinearVelocity().x,-2);
+            isGrabbing = true;
+        }
+        else{
+            if(!sensorState.bottem){
+                isGrabbing = false;
+            }
         }
 
         // don't move if both right and left are pressed
@@ -117,29 +138,33 @@ public class Player extends PhysicsSprite {
                     setTexture(haltLeft.getKeyFrame(elapsed, true));
                 }
             } else {
-                // set texture to jumping
+                if (wasRight) {
+                    setTexture(jumpRight);
+                } else {
+                    setTexture(jumpLeft);
+                }
             }
             body.setLinearVelocity(0,body.getLinearVelocity().y);
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !sensorState.right){
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !sensorState.bottemRight){
             wasRight = true;
             // if on ground change Dunlea to the right run animation
             // else make him the jumping texture
             if(sensorState.bottem) {
                 setTexture(runRight.getKeyFrame(elapsed, true));
             }else{
-                // set texture to jumping
+                setTexture(jumpRight);
             }
             body.setLinearVelocity(7,body.getLinearVelocity().y);
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !sensorState.left){
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && !sensorState.bottemLeft){
             wasRight = false;
             // if on ground change Dunlea to the left run animation
             // else make him the jumping texture
             if(sensorState.bottem) {
                 setTexture(runLeft.getKeyFrame(elapsed, true));
             }else{
-                // set texture to jumping
+                setTexture(jumpLeft);
             }
             body.setLinearVelocity(-7,body.getLinearVelocity().y);
         }

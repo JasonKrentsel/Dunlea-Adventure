@@ -73,11 +73,18 @@ public class CollisionManager implements ContactListener{
                 case Top:
                     playerState.top = beginContact;
                     break;
-                case Left:
-                    playerState.left = beginContact;
+                case TopLeft:
+                    playerState.topLeft = beginContact;
                     break;
-                case Right:
-                    playerState.right = beginContact;
+                case TopRight:
+                    playerState.topRight = beginContact;
+                    break;
+                case BottemLeft:
+                    playerState.bottemRight = beginContact;
+                    break;
+                case BottemRight:
+                    playerState.bottemRight = beginContact;
+                    break;
             }
         }
     }
