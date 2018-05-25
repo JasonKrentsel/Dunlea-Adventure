@@ -2,15 +2,19 @@ package com.game.LevelManagment;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
@@ -33,10 +37,10 @@ public class TileMap {
      * @param world
      */
     private void createBodies(World world){
-        RectangleMapObject rect;
+        PolylineMapObject rect;
         for(MapObject mapObject : map.getLayers().get("Col").getObjects()){
             if(mapObject instanceof RectangleMapObject) {
-                rect = (RectangleMapObject)mapObject;
+                rect = (PolylineMapObject)mapObject;
                 initializeBody(world,rect);
             }
         }
@@ -46,26 +50,31 @@ public class TileMap {
      * Method used for creating the hitboxes of the tile map.
      * Uses rectangle map objects created in Tiled(tile map editor).
      * @param world
-     * @param rectangleMapObject
+     * @param polylineMapObject
      */
-    private void initializeBody(World world, RectangleMapObject rectangleMapObject){
-        com.badlogic.gdx.math.Rectangle rect = rectangleMapObject.getRectangle();
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(rect.getWidth()/2f/ GameMain.PPM,rect.getHeight()/2f/GameMain.PPM);
-
+    private void initializeBody(World world, PolylineMapObject polylineMapObject){
+        Shape shape = getPolyline(polylineMapObject);
         BodyDef bd = new BodyDef();
-        bd.position.set((rect.getX()-GameMain.WIDTH/2+rect.getWidth()/2)/GameMain.PPM,(rect.getY()-GameMain.HEIGHT/2+rect.getHeight()/2)/GameMain.PPM);
         bd.type = BodyDef.BodyType.StaticBody;
-
         Body body = world.createBody(bd);
-
-        FixtureDef fd = new FixtureDef();
-        fd.density = 1;
-        fd.friction = 1;
-        fd.shape = shape;
-        Fixture f = body.createFixture(fd);
+        Fixture f = body.createFixture(shape,1);
         f.setUserData("TileBox");
         shape.dispose();
+    }
+
+    private static ChainShape getPolyline(PolylineMapObject polylineObject) {
+        float[] vertices = polylineObject.getPolyline().getTransformedVertices();
+        Vector2[] worldVertices = new Vector2[vertices.length / 2];
+
+        for (int i = 0; i < vertices.length / 2; ++i) {
+            worldVertices[i] = new Vector2();
+            worldVertices[i].x = vertices[i * 2] / GameMain.PPM;
+            worldVertices[i].y = vertices[i * 2 + 1] / GameMain.PPM;
+        }
+
+        ChainShape chain = new ChainShape();
+        chain.createChain(worldVertices);
+        return chain;
     }
 
     /**
