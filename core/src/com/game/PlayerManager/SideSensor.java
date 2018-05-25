@@ -105,11 +105,11 @@ public class SideSensor {
                 break;
             case TopLeft:
                 x = sprite.getX()-w;
-                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5;
+                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5-4;
                 break;
             case TopRight:
                 x = sprite.getX()+sprite.getWidth();
-                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5;
+                y = sprite.getY()+sprite.getHeight()-sprite.getHeight()/5-4;
                 break;
             case BottemLeft:
                 x = sprite.getX()-w;

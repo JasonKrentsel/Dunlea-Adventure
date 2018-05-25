@@ -80,7 +80,7 @@ public class CollisionManager implements ContactListener{
                     playerState.topRight = beginContact;
                     break;
                 case BottemLeft:
-                    playerState.bottemRight = beginContact;
+                    playerState.bottemLeft = beginContact;
                     break;
                 case BottemRight:
                     playerState.bottemRight = beginContact;
