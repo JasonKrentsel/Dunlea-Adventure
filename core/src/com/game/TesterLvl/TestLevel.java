@@ -14,7 +14,6 @@ import com.game.LevelManagment.CollisionManager;
 import com.game.PlayerManager.Player;
 import com.game.GameMain;
 import com.game.LevelManagment.TileMap;
-
 public class TestLevel implements Screen {
 
     OrthographicCamera camera = new OrthographicCamera(GameMain.WIDTH, GameMain.HEIGHT);
@@ -34,7 +33,7 @@ public class TestLevel implements Screen {
 
         // creating physics world and the tile map
         world = new World(new Vector2(0, -9.8f * 3f), true);
-        tileMap = new TileMap("Levels/Map/map.tmx", world);
+        tileMap = new TileMap("Levels/Tester/lvl.tmx", world);
         // creating player
         p = new Player(world, 200, 200);
         // creating global collision manager

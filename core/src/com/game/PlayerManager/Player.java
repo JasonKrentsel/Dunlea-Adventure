@@ -116,17 +116,15 @@ public class Player extends PhysicsSprite {
         /**
          * jump and fall
          */
-        // slide stuff
-
         // jump
-         if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem || movementState.state == MovementState.State.sliding)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem || movementState.state == MovementState.State.sliding)) {
             body.setLinearVelocity(body.getLinearVelocity().x, jumpVelocity);
-            if (movementState.state != MovementState.State.sliding)
-                movementState.setJump(true);
+            movementState.setJump(true);
         }
         // quick fall
         else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && !sensorState.bottem) {
             super.body.setLinearVelocity(body.getLinearVelocity().x, -dropVelocity);
+            movementState.setJump(true);
         } else if (sensorState.bottem) {
             movementState.setJump(false);
         }
@@ -199,9 +197,10 @@ public class Player extends PhysicsSprite {
                 break;
         }
     }
+
     private Vector2 midpoint = new Vector2();
-    public Vector2 getMidpoint(){
-        midpoint.set(getX()+(getWidth()/2),getY()+(getHeight()/2));
+    public Vector2 getMidpoint() {
+        midpoint.set(getX() + (getWidth() / 2), getY() + (getHeight() / 2));
         return midpoint;
     }
 }
