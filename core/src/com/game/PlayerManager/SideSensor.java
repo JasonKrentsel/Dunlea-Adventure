@@ -42,8 +42,8 @@ public class SideSensor {
         PolygonShape shape = new PolygonShape();
         switch (side){
             case Bottem:
-                w = sprite.getWidth()-2;
-                h = 1;
+                w = sprite.getWidth()-10;
+                h = 10;
                 shape.setAsBox(w/2f/GameMain.PPM,h/2f/GameMain.PPM);
                 break;
             case Top:
@@ -75,7 +75,7 @@ public class SideSensor {
 
         BodyDef bd = new BodyDef();
         updateXY();
-        bd.position.set((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM);
+        bd.position.set((x+w/2)/GameMain.PPM,(y+h/2)/GameMain.PPM);
         bd.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bd);
@@ -96,7 +96,7 @@ public class SideSensor {
     private void updateXY(){
         switch (side){
             case Bottem:
-                x = sprite.getX()+1;
+                x = sprite.getX()+5;
                 y = sprite.getY()-h;
                 break;
             case Top:
@@ -127,6 +127,6 @@ public class SideSensor {
      */
     public void updatePos(){
         updateXY();
-        body.setTransform((x-GameMain.WIDTH/2+w/2)/GameMain.PPM,(y-GameMain.HEIGHT/2+h/2)/GameMain.PPM,0);
+        body.setTransform((x+w/2)/GameMain.PPM,(y+h/2)/GameMain.PPM,0);
     }
 }

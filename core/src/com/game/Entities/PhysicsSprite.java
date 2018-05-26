@@ -36,7 +36,7 @@ public class PhysicsSprite extends Sprite {
         shape.setAsBox(getWidth()/2f/GameMain.PPM,getHeight()/2f/GameMain.PPM);
 
         BodyDef bd = new BodyDef();
-        bd.position.set((getX()-GameMain.WIDTH/2+getWidth()/2)/GameMain.PPM,(getY()-GameMain.HEIGHT/2+getHeight()/2)/GameMain.PPM);
+        bd.position.set((getX()+getWidth()/2)/GameMain.PPM,(getY()+getHeight()/2)/GameMain.PPM);
         if(cm) {
             bd.type = BodyDef.BodyType.DynamicBody;
         }else{
@@ -58,7 +58,7 @@ public class PhysicsSprite extends Sprite {
      * Updates the sprites position and rotation based on the body
      */
     private void updateSprite(){
-        setPosition((body.getPosition().x)*GameMain.PPM+GameMain.WIDTH/2-getWidth()/2,(body.getPosition().y)*GameMain.PPM+GameMain.HEIGHT/2-getHeight()/2);
+        setPosition((body.getPosition().x)*GameMain.PPM-getWidth()/2,(body.getPosition().y)*GameMain.PPM-getHeight()/2);
         setRotation((float)Math.toDegrees((double) body.getAngle()));
     }
 

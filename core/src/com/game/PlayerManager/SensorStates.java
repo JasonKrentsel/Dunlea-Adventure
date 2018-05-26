@@ -10,6 +10,6 @@ public class SensorStates {
 
     @Override
     public String toString() {
-        return "Top: "+top+"     Bottem: "+bottem+"     TopLeft: "+topLeft+"     TopRight: "+topRight;
+        return "Top: "+top+"     Bottem: "+bottem+"     TopLeft: "+topLeft+"     TopRight: "+topRight+"     BottemLeft: "+bottemLeft+"     BottemRight: "+bottemRight;
     }
 }

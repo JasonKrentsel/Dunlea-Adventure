@@ -76,7 +76,7 @@ public class Player extends PhysicsSprite {
         shape.setAsBox(getWidth() / 2f / GameMain.PPM, getHeight() / 2f / GameMain.PPM);
 
         BodyDef bd = new BodyDef();
-        bd.position.set((getX() - GameMain.WIDTH / 2 + getWidth() / 2) / GameMain.PPM, (getY() - GameMain.HEIGHT / 2 + getHeight() / 2) / GameMain.PPM);
+        bd.position.set((getX() + getWidth() / 2) / GameMain.PPM, (getY() + getHeight() / 2) / GameMain.PPM);
         bd.fixedRotation = true;
         bd.type = BodyDef.BodyType.DynamicBody;
 
@@ -117,7 +117,7 @@ public class Player extends PhysicsSprite {
          * jump and fall
          */
         // jump
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem || movementState.state == MovementState.State.sliding)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem)) {
             body.setLinearVelocity(body.getLinearVelocity().x, jumpVelocity);
             movementState.setJump(true);
         }
