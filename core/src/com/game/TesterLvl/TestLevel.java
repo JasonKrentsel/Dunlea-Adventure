@@ -51,6 +51,7 @@ public class TestLevel implements Screen {
     Skin skin;
     CheckBox hitboxToggle;
     CheckBox sensorReport;
+    CheckBox positionReport;
     Stage stage;
     com.badlogic.gdx.scenes.scene2d.ui.Window window;
     BitmapFont font = new BitmapFont();
@@ -74,10 +75,11 @@ public class TestLevel implements Screen {
         stage = new Stage();
         hitboxToggle = new CheckBox("HitBoxes",skin);
         sensorReport = new CheckBox("Sensor Report",skin);
+        positionReport = new CheckBox("Position Report",skin);
         window = new com.badlogic.gdx.scenes.scene2d.ui.Window("Debug",skin);
         window.setResizable(true);
         window.setMovable(true);
-        window.add(hitboxToggle,sensorReport);
+        window.add(hitboxToggle,sensorReport,positionReport);
         window.pack();
         window.setPosition(0,GameMain.HEIGHT-window.getHeight());
         stage.addActor(window);
@@ -119,6 +121,11 @@ public class TestLevel implements Screen {
 
         if(sensorReport.isChecked()){
             font.draw(batch,p.sensorState.toString(),camera.position.x-300,camera.position.y +300);
+        }
+
+        if(positionReport.isChecked()){
+            font.draw(batch,"Player ("+p.getX()+","+p.getY()+")",camera.position.x-300,camera.position.y +250);
+            font.draw(batch,"Body   "+p.body.getPosition().toString(),camera.position.x-300,camera.position.y +200);
         }
 
         batch.end();

@@ -62,7 +62,6 @@ public class Player extends PhysicsSprite {
         sensors.add(new SideSensor(this, Side.TopRight));
         sensors.add(new SideSensor(this, Side.BottemRight));
         sensors.add(new SideSensor(this, Side.BottemLeft));
-
     }
 
     /**
@@ -102,6 +101,9 @@ public class Player extends PhysicsSprite {
      */
     @Override
     public void draw(Batch batch) {
+        if(getY()<-500){
+            body.setTransform(200/GameMain.PPM,300/GameMain.PPM,0);
+        }
         elapsed += Gdx.graphics.getDeltaTime();
         super.draw(batch);
         move();
@@ -118,7 +120,7 @@ public class Player extends PhysicsSprite {
          * jump and fall
          */
         // jump
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && (sensorState.bottem || movementState.state == MovementState.State.sliding)) {
             body.setLinearVelocity(body.getLinearVelocity().x, jumpVelocity);
             movementState.setJump(true);
         }
