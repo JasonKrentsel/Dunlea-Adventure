@@ -97,7 +97,7 @@ public class SideSensor {
         switch (side){
             case Bottem:
                 x = sprite.getX()+5;
-                y = sprite.getY()-h;
+                y = sprite.getY()-h+3;
                 break;
             case Top:
                 x = sprite.getX()+1;
