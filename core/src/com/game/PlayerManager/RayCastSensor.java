@@ -14,7 +14,6 @@ public class RayCastSensor {
     private Vector2 collisionPoint = new Vector2();
 
     public RayCastSensor(World world) {
-        shapeRenderer.setAutoShapeType(true);
         this.world = world;
     }
 
@@ -29,19 +28,10 @@ public class RayCastSensor {
         world.rayCast(callback, fromPoint, toPoint);
     }
 
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
-
     public boolean cast(Vector2 initialPoint, Vector2 bilinearPoint,float maxDistance) {
         fromPoint.set(initialPoint);
         toPoint.set(bilinearPoint);
         calculateCollisionPoint();
-
-        shapeRenderer.begin();
-        shapeRenderer.line(initialPoint.scl(100),collisionPoint.scl(100));
-        shapeRenderer.end();
-
-        initialPoint.scl(1/100f);
-        collisionPoint.scl(1/100f);
 
         return getDitance(initialPoint,collisionPoint)<(maxDistance/GameMain.PPM);
     }
