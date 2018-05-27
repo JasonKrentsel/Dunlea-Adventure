@@ -60,7 +60,7 @@ public class TestLevel implements Screen {
         world = new World(new Vector2(0, -9.8f * 3f), true);
         tileMap = new TileMap("Levels/Tester/lvl.tmx", world);
         // creating player
-        p = new Player(world, 200, 200);
+        p = new Player(world, 300, 200);
 
         skin = new Skin(new FileHandle("default/skin/uiskin.json"));
         stage = new Stage();

@@ -104,46 +104,89 @@ public class Player extends PhysicsSprite {
      */
     boolean isRight = true;
     boolean inAir = false;
+    boolean isSliding = false;
     private void move() {
-        if(Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.getState(Position.Bottem)){
+        if(Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(Position.TopLeft) && !sensorController.getState(Position.Bottem)){
+            body.setLinearVelocity(body.getLinearVelocity().x,-2);
+            setTexture(slideLeft);
+            isSliding = true;
+        }
+        else if (Gdx.input.isKeyPressed(Input.Keys.D) && sensorController.getState(Position.TopRight) && !sensorController.getState(Position.Bottem)){
+            body.setLinearVelocity(body.getLinearVelocity().x,-2);
+            setTexture(slideRight);
+            isSliding = true;
+        }else {
+            isSliding = false;
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)){
+            if(!sensorController.getState(Position.Bottem)) {
+                if (isRight)
+                    setTexture(jumpRight);
+                else
+                    setTexture(jumpLeft);
+            }
+            else{
+                if(isRight)
+                    setTexture(haltRight.getKeyFrame(elapsed,true));
+                else
+                    setTexture(haltLeft.getKeyFrame(elapsed,true));
+            }
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.getState(Position.Bottem) && !((sensorController.getState(Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))){
             body.setLinearVelocity(body.getLinearVelocity().x,jumpVelocity);
-            if(isRight)
-                setTexture(jumpRight);
-            else
-                setTexture(jumpLeft);
+            if(!isSliding) {
+                if (isRight)
+                    setTexture(jumpRight);
+                else
+                    setTexture(jumpLeft);
+            }
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)){
             body.setLinearVelocity(body.getLinearVelocity().x,-dropVelocity);
-            if(isRight)
-                setTexture(jumpRight);
-            else
-                setTexture(jumpLeft);
+            if(!isSliding) {
+                if (isRight)
+                    setTexture(jumpRight);
+                else
+                    setTexture(jumpLeft);
+            }
         } else if(!sensorController.getState(Position.Bottem)){
             inAir = true;
-            if(isRight)
-                setTexture(jumpRight);
-            else
-                setTexture(jumpLeft);
+            if(!isSliding) {
+                if (isRight)
+                    setTexture(jumpRight);
+                else
+                    setTexture(jumpLeft);
+            }
         } else {
             inAir = false;
         }
 
 
-        if(Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)){
+        if(Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.A)){
+            body.setLinearVelocity(0,body.getLinearVelocity().y);
+            if(!inAir && !isSliding){
+                if(isRight)
+                    setTexture(haltRight.getKeyFrame(elapsed,true));
+                else
+                    setTexture(haltLeft.getKeyFrame(elapsed,true));
+            }
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)){
             body.setLinearVelocity(speed,body.getLinearVelocity().y);
             isRight = true;
-            if(!inAir)
+            if(!inAir && !isSliding)
                 setTexture(runRight.getKeyFrame(elapsed,true));
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)){
             body.setLinearVelocity(-speed,body.getLinearVelocity().y);
             isRight = false;
-            if(!inAir)
+            if(!inAir && !isSliding)
                 setTexture(runLeft.getKeyFrame(elapsed,true));
         }
         else {
             body.setLinearVelocity(0,body.getLinearVelocity().y);
-            if(!inAir){
+            if(!inAir && !isSliding){
                 if(isRight)
                     setTexture(haltRight.getKeyFrame(elapsed,true));
                 else
