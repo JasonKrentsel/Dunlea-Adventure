@@ -46,22 +46,22 @@ public class PlayerSensorController {
     private void updatePos(Position position) {
         switch (position) {
             case Top:
-                sensorBoxes.get(position).set(player.getX() + 10, player.getY() + player.getHeight() - 6, player.getWidth() - 20, 1);
+                sensorBoxes.get(position).set(player.getX() + 20, player.getY() + player.getHeight() - 6, player.getWidth() - 40, 1);
                 break;
             case Bottem:
-                sensorBoxes.get(position).set(player.getX() + 10, player.getY() + 3, player.getWidth() - 20, 1);
+                sensorBoxes.get(position).set(player.getX() + 20, player.getY() + 3, player.getWidth() - 40, 1);
                 break;
             case TopLeft:
-                sensorBoxes.get(position).set(player.getX() +4, player.getY() + player.getHeight() - 15, 1, 5);
+                sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + player.getHeight() - 15, 1, 5);
                 break;
             case BottemLeft:
-                sensorBoxes.get(position).set(player.getX() +4, player.getY() + 10, 1, 5);
+                sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + 10, 1, 5);
                 break;
             case TopRight:
-                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6, player.getY() + player.getHeight() - 15, 1, 5);
+                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6-11, player.getY() + player.getHeight() - 15, 1, 5);
                 break;
             case BottemRight:
-                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6, player.getY() + 10, 1, 5);
+                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6-11, player.getY() + 10, 1, 5);
                 break;
         }
     }
