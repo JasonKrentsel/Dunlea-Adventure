@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
 public class PhysicsSprite extends Sprite {
-    protected World world;      // physics word to put the body into, initialized in a class that interfaces Screen
+    public World world;      // physics word to put the body into, initialized in a class that interfaces Screen
     public Body body;           // the physics body of the sprite, used in other classes, but is useless here
     protected String name;      // string to input as userdata for a the fixture of the body, which is used for distinguishing collisions
 
