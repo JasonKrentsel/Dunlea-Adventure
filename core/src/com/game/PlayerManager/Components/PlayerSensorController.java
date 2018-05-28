@@ -49,7 +49,7 @@ public class PlayerSensorController {
                 sensorBoxes.get(position).set(player.getX() + 20, player.getY() + player.getHeight() - 6, player.getWidth() - 40, 1);
                 break;
             case Bottem:
-                sensorBoxes.get(position).set(player.getX() + 20, player.getY() + 3, player.getWidth() - 40, 1);
+                sensorBoxes.get(position).set(player.getX() + 18, player.getY() + 3, player.getWidth() - 36, 1);
                 break;
             case TopLeft:
                 sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + player.getHeight() - 15, 1, 5);

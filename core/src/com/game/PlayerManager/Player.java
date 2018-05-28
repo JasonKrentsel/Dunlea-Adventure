@@ -21,7 +21,7 @@ public class Player extends PhysicsSprite {
     /**
      * Player Movement Vars
      */
-    private float speed = 6;
+    private float speed = 7;
     private float jumpVelocity = 15;
     private float dropVelocity = 10;
     private float slideVelocity = 2;
@@ -39,7 +39,7 @@ public class Player extends PhysicsSprite {
     private final Texture jumpLeft = new Texture("dunlea/jump/jumpLeft.png");
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
-
+    Vector2 init = new Vector2();
     public PlayerSensorController sensorController = new PlayerSensorController(this);           // pointer to the sensor states that are passed to and edited by the CollisionManager
 
     /**
@@ -53,6 +53,7 @@ public class Player extends PhysicsSprite {
      */
     public Player(World world, float x, float y) {
         super("Player", new Texture("dunlea/idleRight/F0.png"), world, x, y, true);
+        init.set(x, y);
     }
 
     /**
@@ -91,7 +92,7 @@ public class Player extends PhysicsSprite {
     public void draw(Batch batch) {
         super.draw(batch);
         if (getY() < -500) {
-            body.setTransform(200 / GameMain.PPM, 300 / GameMain.PPM, 0);
+            body.setTransform(init.x / GameMain.PPM, init.y / GameMain.PPM, 0);
         }
         elapsed += Gdx.graphics.getDeltaTime();
         move();
@@ -105,6 +106,7 @@ public class Player extends PhysicsSprite {
     boolean isRight = true;
 
     boolean inAir = false;
+
     enum State {
         Slide,
         Halt,
@@ -114,22 +116,33 @@ public class Player extends PhysicsSprite {
     State state;
 
     private void move() {
+        /**
+         * Left and Right Movement
+         */
         if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.A)) {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
             state = State.Halt;
         } else if (Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)) {
-            body.setLinearVelocity(speed, body.getLinearVelocity().y);
+            if (body.getLinearVelocity().x < 0)
+                body.setLinearVelocity(0, body.getLinearVelocity().y);
+            if (body.getLinearVelocity().x < speed)
+                body.applyForceToCenter(40, 0, true);
             state = State.Move;
             isRight = true;
         } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)) {
-            body.setLinearVelocity(-speed, body.getLinearVelocity().y);
+            if (body.getLinearVelocity().x > 0)
+                body.setLinearVelocity(0, body.getLinearVelocity().y);
+            if (body.getLinearVelocity().x > -speed)
+                body.applyForceToCenter(-40, 0, true);
             state = State.Move;
             isRight = false;
         } else {
             body.setLinearVelocity(0, body.getLinearVelocity().y);
             state = State.Halt;
         }
-
+        /**
+         * Wall sliding
+         */
         if (Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(Position.TopLeft) && !sensorController.getState(Position.Bottem)) {
             body.setLinearVelocity(body.getLinearVelocity().x, -2);
             state = State.Slide;
@@ -141,8 +154,9 @@ public class Player extends PhysicsSprite {
             isRight = true;
             inAir = false;
         }
-
-
+        /**
+         * Jumping
+         */
         if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 
         } else if (Gdx.input.isKeyPressed(Input.Keys.W) && (sensorController.getState(Position.Bottem)) && !((sensorController.getState(Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
@@ -151,38 +165,38 @@ public class Player extends PhysicsSprite {
         } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)) {
             body.setLinearVelocity(body.getLinearVelocity().x, -dropVelocity);
             inAir = true;
-        } else if(sensorController.getState(Position.Bottem)){
+        } else if (sensorController.getState(Position.Bottem)) {
             inAir = false;
         }
         chooseTexture();
     }
 
-    private void chooseTexture(){
-        if(state != State.Slide && !sensorController.getState(Position.Bottem)){
-            if(isRight)
+    private void chooseTexture() {
+        if (state != State.Slide && !sensorController.getState(Position.Bottem)) {
+            if (isRight)
                 setTexture(jumpRight);
             else
                 setTexture(jumpLeft);
             return;
         }
-        switch (state){
+        switch (state) {
             case Slide:
-                if(isRight)
+                if (isRight)
                     setTexture(slideRight);
                 else
                     setTexture(slideLeft);
                 break;
             case Halt:
-                if(isRight)
-                    setTexture(haltRight.getKeyFrame(elapsed,true));
+                if (isRight)
+                    setTexture(haltRight.getKeyFrame(elapsed, true));
                 else
                     setTexture(haltLeft.getKeyFrame(elapsed, true));
                 break;
             case Move:
                 if (isRight)
-                    setTexture(runRight.getKeyFrame(elapsed,true));
+                    setTexture(runRight.getKeyFrame(elapsed, true));
                 else
-                    setTexture(runLeft.getKeyFrame(elapsed,true));
+                    setTexture(runLeft.getKeyFrame(elapsed, true));
                 break;
         }
     }

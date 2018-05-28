@@ -36,8 +36,6 @@ public class TileMap {
 
     public void buildShapes(Map map, World world) {
         MapObjects objects = map.getLayers().get("Col").getObjects();
-
-
         for (MapObject object : objects) {
             if (object instanceof TextureMapObject) {
                 continue;
@@ -60,13 +58,11 @@ public class TileMap {
     private static ChainShape getPolyline(PolylineMapObject polylineObject) {
         float[] vertices = polylineObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
-
         for (int i = 0; i < vertices.length / 2; ++i) {
             worldVertices[i] = new Vector2();
             worldVertices[i].x = (vertices[i * 2]) / GameMain.PPM;
             worldVertices[i].y = (vertices[i * 2 + 1]) / GameMain.PPM;
         }
-
         ChainShape chain = new ChainShape();
         chain.createChain(worldVertices);
         return chain;

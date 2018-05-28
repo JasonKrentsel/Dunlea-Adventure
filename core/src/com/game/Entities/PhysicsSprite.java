@@ -42,9 +42,7 @@ public class PhysicsSprite extends Sprite {
         }else{
             bd.type = BodyDef.BodyType.StaticBody;
         }
-
         body = world.createBody(bd);
-
         FixtureDef fd = new FixtureDef();
         fd.density = 1;
         fd.friction = 1;
