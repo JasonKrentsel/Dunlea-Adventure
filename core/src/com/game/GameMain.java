@@ -1,13 +1,17 @@
 package com.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.game.TesterLvl.TestLevel;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 public class GameMain extends Game {
 	// static variables use through out the game
-	public static final int WIDTH = 1920;
-	public static final int HEIGHT = 1080;
+	public static int WIDTH;
+	public static int HEIGHT;
 	/**
 	 * PPM or pixels per inch:
 	 * Box2d is not the best physics engine and each pixel is treated as a meter.
@@ -20,6 +24,8 @@ public class GameMain extends Game {
 	public SpriteBatch batch;
 
 	public void create () {
+		WIDTH = Gdx.graphics.getWidth();
+		HEIGHT = Gdx.graphics.getHeight();
 		batch = new SpriteBatch();
 		setScreen(new TestLevel(batch));
 	}
