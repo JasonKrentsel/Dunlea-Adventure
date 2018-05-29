@@ -13,20 +13,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.game.PlayerManager.Player;
 import com.game.GameMain;
 import com.game.LevelManagment.TileMap;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import java.awt.Checkbox;
-import java.awt.Window;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import com.game.StateUpdate.DrawUpdatable;
+import com.game.StateUpdate.Updatable;
+
+import java.util.ArrayList;
 
 public class TestLevel implements Screen {
 
@@ -36,20 +34,8 @@ public class TestLevel implements Screen {
     Player p;
     TileMap tileMap;
 
-    Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-    Matrix4 matrixDebug = new Matrix4();
-
-    Skin skin;
-    CheckBox hitboxToggle;
-    CheckBox sensorReport;
-    CheckBox positionReport;
-    CheckBox smoothCamera;
-    Label gravityLabel;
-    Slider gravitySlider;
-    Stage stage;
-    com.badlogic.gdx.scenes.scene2d.ui.Window window;
-    BitmapFont font = new BitmapFont();
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
+    ArrayList<Updatable> updateList = new ArrayList<Updatable>();
 
     public TestLevel(SpriteBatch batch) {
         this.batch = batch;
@@ -62,31 +48,7 @@ public class TestLevel implements Screen {
         // creating player
         p = new Player(world, 300, 100);
 
-        skin = new Skin(new FileHandle("default/skin/uiskin.json"));
-        stage = new Stage();
-        hitboxToggle = new CheckBox("HitBoxes ",skin);
-        sensorReport = new CheckBox("Sensor Report ",skin);
-        positionReport = new CheckBox("Position Report ",skin);
-        smoothCamera = new CheckBox("Smooth Camera ", skin);
-        smoothCamera.setChecked(true);
-        gravitySlider = new Slider(0,19.6f,.1f,false,skin);
-        gravitySlider.setValue(9.8f);
-        window = new com.badlogic.gdx.scenes.scene2d.ui.Window("Debug",skin);
-        window.setResizable(true);
-        window.setMovable(true);
-        window.add(hitboxToggle).width(200);
-        window.add(sensorReport).width(200);
-        window.add(positionReport).width(200);
-        window.add(smoothCamera).width(200);
-        window.row();
-        gravityLabel = new Label("Physics Speed [1]",skin);
-        window.add(gravityLabel,gravitySlider);
-        window.pack();
-        window.setPosition(0,GameMain.HEIGHT-window.getHeight());
-        stage.addActor(window);
-        Gdx.input.setInputProcessor(stage);
-
-        shapeRenderer.setAutoShapeType(true);
+        spriteList.add(p);
     }
 
     @Override
@@ -104,6 +66,23 @@ public class TestLevel implements Screen {
         Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        updateCamera();
+
+        tileMap.render(camera);
+        batch.begin();
+
+        for(DrawUpdatable sprite: spriteList){
+            sprite.update(batch);
+        }
+        for(Updatable u: updateList){
+            u.update();
+        }
+
+        // iterates the physics simulation
+        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+    }
+
+    private void updateCamera(){
         if(p.getMidpoint().x > GameMain.WIDTH/2)
             pX = p.getMidpoint().x;
         else
@@ -112,42 +91,9 @@ public class TestLevel implements Screen {
             pY = p.getMidpoint().y;
         else
             pY = GameMain.HEIGHT/2;
-
-        if(smoothCamera.isChecked())
-            camera.position.lerp(new Vector3(pX,pY,0),.05f);
-        else
-            camera.position.set(new Vector3(pX,pY,0));
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        camera.position.lerp(new Vector3(pX,pY,0),.1f);
         batch.setProjectionMatrix(camera.combined);
         camera.update(true);
-
-        tileMap.render(camera);
-        batch.begin();
-        p.draw(batch);
-
-        if(sensorReport.isChecked()){
-            font.draw(batch,p.sensorController.toString(),camera.position.x-300,camera.position.y +300);
-        }
-        if(positionReport.isChecked()){
-            font.draw(batch,"Player ("+p.getX()+","+p.getY()+")",camera.position.x-300,camera.position.y +250);
-            font.draw(batch,"Body   "+p.body.getPosition().toString(),camera.position.x-300,camera.position.y +200);
-        }
-        batch.end();
-        stage.draw();
-
-        shapeRenderer.begin();
-        if(hitboxToggle.isChecked()) {
-            matrixDebug.set(camera.combined);
-            matrixDebug.scl(GameMain.PPM);
-            debugRenderer.render(world, matrixDebug);
-            p.sensorController.drawSensorBoxes(shapeRenderer);
-        }
-        shapeRenderer.end();
-        // iterates the physics simulation
-        gravityLabel.setText("Gravity ["+gravitySlider.getValue()+"]");
-        world.setGravity(new Vector2(0,-gravitySlider.getValue()*3));
-        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
     }
 
     @Override

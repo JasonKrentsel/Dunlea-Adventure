@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -16,8 +17,9 @@ import com.game.GameMain;
 import com.game.PlayerManager.Components.PlayerSensorController;
 import com.game.PlayerManager.Sensor.AABBSensor;
 import com.game.PlayerManager.Sensor.Position;
+import com.game.StateUpdate.DrawUpdatable;
 
-public class Player extends PhysicsSprite {
+public class Player extends PhysicsSprite{
     /**
      * Player Movement Vars
      */
@@ -78,6 +80,11 @@ public class Player extends PhysicsSprite {
         Fixture fixture = body.createFixture(fd);
         fixture.setUserData(name);
         shape.dispose();
+    }
+
+    @Override
+    public void update(SpriteBatch batch) {
+        draw(batch);
     }
 
     /**

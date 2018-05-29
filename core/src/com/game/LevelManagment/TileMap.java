@@ -5,8 +5,6 @@ import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -14,9 +12,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
@@ -37,12 +32,9 @@ public class TileMap {
     public void buildShapes(Map map, World world) {
         MapObjects objects = map.getLayers().get("Col").getObjects();
         for (MapObject object : objects) {
-            if (object instanceof TextureMapObject) {
-                continue;
-            }
             Shape shape;
             if (object instanceof PolylineMapObject) {
-                shape = getPolyline((PolylineMapObject) object);
+                shape = getPolylineShape((PolylineMapObject) object);
             } else {
                 continue;
             }
@@ -55,7 +47,7 @@ public class TileMap {
     }
 
 
-    private static ChainShape getPolyline(PolylineMapObject polylineObject) {
+    private static ChainShape getPolylineShape(PolylineMapObject polylineObject) {
         float[] vertices = polylineObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
         for (int i = 0; i < vertices.length / 2; ++i) {

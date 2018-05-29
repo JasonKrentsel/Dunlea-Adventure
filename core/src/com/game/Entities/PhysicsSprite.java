@@ -4,6 +4,7 @@ package com.game.Entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -11,8 +12,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
+import com.game.StateUpdate.DrawUpdatable;
 
-public class PhysicsSprite extends Sprite {
+public class PhysicsSprite extends Sprite implements DrawUpdatable{
     public World world;      // physics word to put the body into, initialized in a class that interfaces Screen
     public Body body;           // the physics body of the sprite, used in other classes, but is useless here
     protected String name;      // string to input as userdata for a the fixture of the body, which is used for distinguishing collisions
@@ -68,5 +70,10 @@ public class PhysicsSprite extends Sprite {
     public void draw(Batch batch){
         updateSprite();
         super.draw(batch);
+    }
+
+    @Override
+    public void update(SpriteBatch batch) {
+        draw(batch);
     }
 }

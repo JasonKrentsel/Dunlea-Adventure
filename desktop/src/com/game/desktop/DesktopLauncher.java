@@ -1,7 +1,6 @@
 package com.game.desktop;
 
 import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.game.GameMain;
@@ -11,12 +10,10 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.backgroundFPS = 120;
 		config.foregroundFPS = 120;
-		config.fullscreen = false;
+		config.fullscreen = true;
 		config.width = GameMain.WIDTH;
 		config.height = GameMain.HEIGHT;
 		config.vSyncEnabled = false;
-		config.foregroundFPS = 120;
-		config.backgroundFPS = 120;
 		config.title = "Dunlea's Adventure";
 
 		config.addIcon("icon128.png", Files.FileType.Internal);
