@@ -69,11 +69,12 @@ public class TestLevel implements Screen {
         updateCamera();
 
         tileMap.render(camera);
-        batch.begin();
 
+        batch.begin();
         for(DrawUpdatable sprite: spriteList){
             sprite.update(batch);
         }
+        batch.end();
         for(Updatable u: updateList){
             u.update();
         }
