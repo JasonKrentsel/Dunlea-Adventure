@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.game.TesterLvl.TestLevel;
+import com.game.UI.Menu.MainMenuScreen;
 
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
@@ -13,10 +14,11 @@ import java.awt.Toolkit;
 
 public class GameMain extends Game {
 	// static variables use through out the game
+	public static SpriteBatch batch;
 	public static final int WIDTH = 1920;
 	public static final int HEIGHT = 1080;
 	public static final Vector2 realRes = new Vector2();
-	public static final Screen mainMenu = null;
+	public static Screen mainMenu;
 	static {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		realRes.set(gd.getDisplayMode().getWidth(),gd.getDisplayMode().getHeight());
@@ -29,11 +31,9 @@ public class GameMain extends Game {
 	 */
 	public static final float PPM = 100;
 
-	// used for drawing every texture in the game, only 1 SpriteBatch object can exist
-	public SpriteBatch batch;
-
 	public void create () {
 		batch = new SpriteBatch();
+		mainMenu = new MainMenuScreen(batch);
 		setScreen(new TestLevel(this));
 	}
 

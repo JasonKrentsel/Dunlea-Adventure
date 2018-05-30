@@ -43,9 +43,9 @@ public class GameplayUI implements Updatable{
         TextButton resume = new TextButton("Resume",skin);
         TextButton exit = new TextButton("Exit",skin);
 
-    ImageButton settingsButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/settings.png"))));
+    ImageButton settingsButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/gear.png"))));
     private void create(){
-        settingsButton.setPosition(0, GameMain.HEIGHT-settingsButton.getHeight());
+        settingsButton.setPosition(GameMain.WIDTH-settingsButton.getWidth(), GameMain.HEIGHT-settingsButton.getHeight());
         pauseWindow.setPosition((GameMain.WIDTH/2)-(pauseWindow.getWidth()/2),(GameMain.HEIGHT/2)-(pauseWindow.getHeight()/2));
         pauseWindow.setVisible(false);
         pauseWindow.add(resume);
