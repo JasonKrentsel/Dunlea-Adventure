@@ -8,13 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.game.PlayerManager.Player;
 import com.game.GameMain;
 import com.game.LevelManagment.TileMap;
 import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
+import com.game.UI.InLevel.GameplayUI;
 
 import java.util.ArrayList;
+
+import javax.management.monitor.GaugeMonitor;
 
 public class TestLevel implements Screen {
 
@@ -23,6 +27,8 @@ public class TestLevel implements Screen {
     World world;
     Player p;
     TileMap tileMap;
+
+    GameplayUI ui = new GameplayUI();
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
@@ -39,6 +45,7 @@ public class TestLevel implements Screen {
         p = new Player(world, 300, 100);
 
         spriteList.add(p);
+        updateList.add(ui);
     }
 
     @Override
@@ -49,7 +56,6 @@ public class TestLevel implements Screen {
 
     float pY;
     float pX;
-
     @Override
     public void render(float delta) {
         // needed to clear each frame and have a default background color
