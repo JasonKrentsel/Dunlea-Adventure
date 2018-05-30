@@ -15,7 +15,7 @@ public class DesktopLauncher {
 		config.foregroundFPS = 120;
 		config.width = (int) GameMain.realRes.x;
 		config.height = (int) GameMain.realRes.y;
-		config.fullscreen = false;
+		config.fullscreen = true;
 		config.vSyncEnabled = false;
 		config.title = "Dunlea's Adventure";
 
