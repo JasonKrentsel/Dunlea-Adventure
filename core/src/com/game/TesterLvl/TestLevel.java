@@ -28,7 +28,7 @@ public class TestLevel implements Screen {
     Player p;
     TileMap tileMap;
 
-    GameplayUI ui = new GameplayUI();
+    GameplayUI ui = new GameplayUI(new Stage());
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
