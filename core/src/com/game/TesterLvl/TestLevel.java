@@ -1,5 +1,6 @@
 package com.game.TesterLvl;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -27,14 +28,16 @@ public class TestLevel implements Screen {
     World world;
     Player p;
     TileMap tileMap;
+    GameMain game;
 
     GameplayUI ui = new GameplayUI(new Stage());
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
 
-    public TestLevel(SpriteBatch batch) {
-        this.batch = batch;
+    public TestLevel(GameMain game) {
+        this.batch = game.batch;
+        this.game = game;
         // setting camera up
         camera.position.set(GameMain.WIDTH / 2, GameMain.HEIGHT / 2, 0);
         batch.setProjectionMatrix(camera.combined);
@@ -76,7 +79,8 @@ public class TestLevel implements Screen {
         }
 
         // iterates the physics simulation
-        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+        if(!ui.isPaused())
+            world.step(Gdx.graphics.getDeltaTime(), 6, 2);
     }
 
     private void updateCamera(){

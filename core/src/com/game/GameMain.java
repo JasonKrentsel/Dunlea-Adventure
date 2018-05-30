@@ -1,6 +1,7 @@
 package com.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.game.TesterLvl.TestLevel;
@@ -15,6 +16,7 @@ public class GameMain extends Game {
 	public static final int WIDTH = 1920;
 	public static final int HEIGHT = 1080;
 	public static final Vector2 realRes = new Vector2();
+	public static final Screen mainMenu = null;
 	static {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		realRes.set(gd.getDisplayMode().getWidth(),gd.getDisplayMode().getHeight());
@@ -32,7 +34,7 @@ public class GameMain extends Game {
 
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new TestLevel(batch));
+		setScreen(new TestLevel(this));
 	}
 
 	public void render () {
