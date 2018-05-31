@@ -3,6 +3,7 @@ package com.game.TesterLvl;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,21 +22,21 @@ import java.util.ArrayList;
 
 import javax.management.monitor.GaugeMonitor;
 
-public class TestLevel implements Screen {
+public class Level implements Screen {
 
     OrthographicCamera camera = new OrthographicCamera(GameMain.WIDTH, GameMain.HEIGHT);
     SpriteBatch batch;
-    World world;
+    public World world;
     Player p;
     TileMap tileMap;
     GameMain game;
 
-    GameplayUI ui = new GameplayUI(new Stage());
+    public GameplayUI ui = new GameplayUI(new Stage());
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
 
-    public TestLevel(GameMain game) {
+    public Level(GameMain game, FileHandle mapTmx) {
         this.batch = game.batch;
         this.game = game;
         // setting camera up
@@ -43,9 +44,9 @@ public class TestLevel implements Screen {
         batch.setProjectionMatrix(camera.combined);
         // creating physics world and the tile map
         world = new World(new Vector2(0, -9.8f * 3f), true);
-        tileMap = new TileMap("Levels/Tester/lvl.tmx", world);
+        tileMap = new TileMap(mapTmx.path(), world);
         // creating player
-        p = new Player(world, 300, 100);
+        p = new Player(this, 300, 100);
 
         spriteList.add(p);
         updateList.add(ui);

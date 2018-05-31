@@ -11,21 +11,20 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.game.Entities.PhysicsSprite;
 import com.game.GameMain;
 import com.game.PlayerManager.Components.PlayerSensorController;
 import com.game.PlayerManager.Sensor.AABBSensor;
 import com.game.PlayerManager.Sensor.Position;
-import com.game.StateUpdate.DrawUpdatable;
+import com.game.TesterLvl.Level;
 
-public class Player extends PhysicsSprite{
+public class Player extends PhysicsSprite {
     /**
      * Player Movement Vars
      */
     private float speed = 7;
-    private float jumpVelocity = 15;
-    private float dropVelocity = 10;
+    private float jumpSpeed = 15;
+    private float dropVelocity = 15;
     private float slideVelocity = 2;
 
     /**
@@ -43,18 +42,20 @@ public class Player extends PhysicsSprite{
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
     public PlayerSensorController sensorController = new PlayerSensorController(this);           // pointer to the sensor states that are passed to and edited by the CollisionManager
+    private Level lvl;
 
     /**
      * Creates player with Sensors.
      * Initializes the sprite with Dunlea's right-side idle frame 0 texture.
      * Which is 27x42.
      *
-     * @param world
+     * @param lvl
      * @param x
      * @param y
      */
-    public Player(World world, float x, float y) {
-        super("Player", new Texture("dunlea/idleRight/F0.png"), world, x, y, true);
+    public Player(Level lvl, float x, float y) {
+        super("Player", new Texture("dunlea/idleRight/F0.png"), lvl.world, x, y, true);
+        this.lvl = lvl;
         init.set(x, y);
     }
 
@@ -99,7 +100,8 @@ public class Player extends PhysicsSprite{
     public void draw(Batch batch) {
         super.draw(batch);
         if (getY() < -500) {
-            body.setTransform(init.x / GameMain.PPM, init.y / GameMain.PPM, 0);
+            body.setLinearVelocity(0, 0);
+            body.setTransform((init.x + getWidth() / 2) / GameMain.PPM, (init.y + getHeight() / 2) / GameMain.PPM, 0);
         }
         elapsed += Gdx.graphics.getDeltaTime();
         move();
@@ -123,59 +125,63 @@ public class Player extends PhysicsSprite{
     State state;
 
     private void move() {
-        /**
-         * Left and Right Movement
-         */
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.A)) {
-            body.setLinearVelocity(0, body.getLinearVelocity().y);
-            state = State.Halt;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)) {
-            if (body.getLinearVelocity().x < 0)
+        if(!lvl.ui.isPaused()) {
+            /**
+             * Left and Right Movement
+             */
+            if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.A)) {
                 body.setLinearVelocity(0, body.getLinearVelocity().y);
-            if (body.getLinearVelocity().x < speed)
-                body.applyForceToCenter(40, 0, true);
-            state = State.Move;
-            isRight = true;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)) {
-            if (body.getLinearVelocity().x > 0)
+                state = State.Halt;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)) {
+                if (body.getLinearVelocity().x < 0)
+                    body.setLinearVelocity(0, body.getLinearVelocity().y);
+                if (body.getLinearVelocity().x < speed)
+                    body.applyForceToCenter(40, 0, true);
+                state = State.Move;
+                isRight = true;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)) {
+                if (body.getLinearVelocity().x > 0)
+                    body.setLinearVelocity(0, body.getLinearVelocity().y);
+                if (body.getLinearVelocity().x > -speed)
+                    body.applyForceToCenter(-40, 0, true);
+                state = State.Move;
+                isRight = false;
+            } else {
                 body.setLinearVelocity(0, body.getLinearVelocity().y);
-            if (body.getLinearVelocity().x > -speed)
-                body.applyForceToCenter(-40, 0, true);
-            state = State.Move;
-            isRight = false;
-        } else {
-            body.setLinearVelocity(0, body.getLinearVelocity().y);
-            state = State.Halt;
-        }
-        /**
-         * Wall sliding
-         */
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(Position.TopLeft) && !sensorController.getState(Position.Bottem)) {
-            body.setLinearVelocity(body.getLinearVelocity().x, -2);
-            state = State.Slide;
-            isRight = false;
-            inAir = false;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D) && sensorController.getState(Position.TopRight) && !sensorController.getState(Position.Bottem)) {
-            body.setLinearVelocity(body.getLinearVelocity().x, -2);
-            state = State.Slide;
-            isRight = true;
-            inAir = false;
-        }
-        /**
-         * Jumping
-         */
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
+                state = State.Halt;
+            }
+            /**
+             * Wall sliding
+             */
+            if (Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(Position.TopLeft) && !sensorController.getState(Position.Bottem)) {
+                body.setLinearVelocity(body.getLinearVelocity().x, -slideVelocity);
+                state = State.Slide;
+                isRight = false;
+                inAir = false;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && sensorController.getState(Position.TopRight) && !sensorController.getState(Position.Bottem)) {
+                body.setLinearVelocity(body.getLinearVelocity().x, -slideVelocity);
+                state = State.Slide;
+                isRight = true;
+                inAir = false;
+            }
+            /**
+             * Jumping
+             */
+            if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 
-        } else if (Gdx.input.isKeyPressed(Input.Keys.W) && (sensorController.getState(Position.Bottem)) && !((sensorController.getState(Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
-            body.setLinearVelocity(body.getLinearVelocity().x, jumpVelocity);
-            inAir = true;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)) {
-            body.setLinearVelocity(body.getLinearVelocity().x, -dropVelocity);
-            inAir = true;
-        } else if (sensorController.getState(Position.Bottem)) {
-            inAir = false;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.getState(Position.Bottem) && !((sensorController.getState(Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
+                body.setLinearVelocity(body.getLinearVelocity().x, 15f);
+                inAir = true;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)) {
+                body.setLinearVelocity(body.getLinearVelocity().x, -dropVelocity);
+                inAir = true;
+            } else if (sensorController.getState(Position.Bottem)) {
+                inAir = false;
+            } else {
+                inAir = true;
+            }
+            chooseTexture();
         }
-        chooseTexture();
     }
 
     private void chooseTexture() {

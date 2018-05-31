@@ -2,15 +2,14 @@ package com.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.game.TesterLvl.TestLevel;
+import com.game.TesterLvl.Level;
 import com.game.UI.Menu.MainMenuScreen;
 
-import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 
 public class GameMain extends Game {
 	// static variables use through out the game
@@ -34,7 +33,7 @@ public class GameMain extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		mainMenu = new MainMenuScreen(batch);
-		setScreen(new TestLevel(this));
+		setScreen(new Level(this,new FileHandle("Levels/Tester/lvl.tmx")));
 	}
 
 	public void render () {
