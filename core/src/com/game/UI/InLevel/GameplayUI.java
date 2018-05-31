@@ -58,19 +58,27 @@ public class GameplayUI implements Updatable{
     /**
      * Buttons and stuff
      */
+    float elapsedUnpaused = 0;
+    float elapsedPaused = 0;
     @Override
     public void update() {
-        if(settingsButton.isPressed()){
+        elapsedUnpaused += Gdx.graphics.getDeltaTime();
+        if(settingsButton.isPressed() || (Gdx.input.isKeyPressed(Input.Keys.P) && elapsedUnpaused >.5)){
             isPaused = true;
             settingsButton.setVisible(false);
             pauseWindow.setVisible(true);
         }
         if(isPaused){
-            if(resume.isPressed()){
+            elapsedUnpaused = 0;
+            elapsedPaused += Gdx.graphics.getDeltaTime();
+            if(resume.isPressed() || (Gdx.input.isKeyPressed(Input.Keys.P) && elapsedPaused >.5)){
                 isPaused = false;
                 settingsButton.setVisible(true);
                 pauseWindow.setVisible(false);
             }
+        }
+        else {
+            elapsedPaused = 0;
         }
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
