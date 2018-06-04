@@ -17,6 +17,8 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.GameMain;
 
+import java.util.ArrayList;
+
 /**
  * simplifies drawing tilemaps and creating hitboxes, does both at the same time
  */
@@ -25,6 +27,8 @@ public class TileMap {
     OrthogonalTiledMapRenderer renderer;
     MapProperties aspects;
     public Vector2 mapSize = new Vector2();
+    private Vector2 playerPos = new Vector2();
+    private ArrayList<Vector2> enemyPos = new ArrayList<Vector2>();
 
     public TileMap(String filePath, World world) {
         map = new TmxMapLoader().load(filePath);
@@ -33,6 +37,7 @@ public class TileMap {
         mapSize.set(aspects.get("width", Integer.class),aspects.get("height", Integer.class));
         mapSize.scl(96f);
         buildShapes(map,world);
+        getEntityPoints(map);
     }
 
     public void buildShapes(Map map, World world) {
@@ -41,7 +46,8 @@ public class TileMap {
             Shape shape;
             if (object instanceof PolylineMapObject) {
                 shape = getPolylineShape((PolylineMapObject) object);
-            } else {
+            }
+            else {
                 continue;
             }
             BodyDef bd = new BodyDef();
@@ -52,6 +58,15 @@ public class TileMap {
         }
     }
 
+    private void getEntityPoints(Map map){
+        MapObject player = map.getLayers().get("Player").getObjects().get("Player");
+        playerPos.set((Float)player.getProperties().get("x"),(Float)player.getProperties().get("y"));
+
+        MapObjects enemies = map.getLayers().get("Enemy").getObjects();
+        for(MapObject enemy : enemies){
+            enemyPos.add(new Vector2((Float)enemy.getProperties().get("x"),(Float)enemy.getProperties().get("y")));
+        }
+    }
 
     private static ChainShape getPolylineShape(PolylineMapObject polylineObject) {
         float[] vertices = polylineObject.getPolyline().getTransformedVertices();
@@ -74,5 +89,13 @@ public class TileMap {
     public void render(OrthographicCamera camera) {
         renderer.setView(camera);
         renderer.render();
+    }
+
+    public Vector2 getPlayerPos(){
+        return playerPos;
+    }
+
+    public ArrayList<Vector2> getEnemyPositions() {
+        return enemyPos;
     }
 }

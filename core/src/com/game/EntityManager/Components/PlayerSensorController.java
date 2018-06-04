@@ -1,31 +1,29 @@
-package com.game.PlayerManager.Components;
+package com.game.EntityManager.Components;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.game.PlayerManager.Player;
-import com.game.PlayerManager.Sensor.AABBSensor;
-import com.game.PlayerManager.Sensor.Position;
-import com.game.PlayerManager.Sensor.PositionStorage;
+import com.game.EntityManager.Sensor.AABBSensor;
+import com.game.EntityManager.Sensor.PositionStorage;
 
 public class PlayerSensorController {
-    Player player;
+    com.game.EntityManager.Player player;
     World world;
     AABBSensor sensor;
     PositionStorage<Rectangle> sensorBoxes;
 
-    public PlayerSensorController(Player player) {
+    public PlayerSensorController(com.game.EntityManager.Player player) {
         this.player = player;
         world = player.world;
         sensor = new AABBSensor(world);
         sensorBoxes = new PositionStorage<Rectangle>();
-        sensorBoxes.set(Position.Top, new Rectangle());
-        sensorBoxes.set(Position.Bottem, new Rectangle());
-        sensorBoxes.set(Position.TopLeft, new Rectangle());
-        sensorBoxes.set(Position.BottemLeft, new Rectangle());
-        sensorBoxes.set(Position.TopRight, new Rectangle());
-        sensorBoxes.set(Position.BottemRight, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.Top, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.Bottem, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.TopLeft, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.BottemLeft, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.TopRight, new Rectangle());
+        sensorBoxes.set(com.game.EntityManager.Sensor.Position.BottemRight, new Rectangle());
         updateAll();
     }
 
@@ -38,12 +36,12 @@ public class PlayerSensorController {
     }
 
     private void updateAll() {
-        for(Position pos: Position.values()){
+        for(com.game.EntityManager.Sensor.Position pos: com.game.EntityManager.Sensor.Position.values()){
             updatePos(pos);
         }
     }
 
-    private void updatePos(Position position) {
+    private void updatePos(com.game.EntityManager.Sensor.Position position) {
         switch (position) {
             case Top:
                 sensorBoxes.get(position).set(player.getX() + 20, player.getY() + player.getHeight() - 6, player.getWidth() - 40, 1);
@@ -66,7 +64,7 @@ public class PlayerSensorController {
         }
     }
 
-    public boolean getState(Position position) {
+    public boolean getState(com.game.EntityManager.Sensor.Position position) {
         Rectangle rec;
         updatePos(position);
         rec = sensorBoxes.get(position);
@@ -76,7 +74,7 @@ public class PlayerSensorController {
     @Override
     public String toString() {
         String o = "";
-        for(Position pos : Position.values()){
+        for(com.game.EntityManager.Sensor.Position pos : com.game.EntityManager.Sensor.Position.values()){
             o+=pos.toString()+" "+getState(pos)+"     ";
         }
         return o;

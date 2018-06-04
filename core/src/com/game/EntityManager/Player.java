@@ -1,4 +1,4 @@
-package com.game.PlayerManager;
+package com.game.EntityManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,9 +13,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.game.Entities.PhysicsSprite;
 import com.game.GameMain;
-import com.game.PlayerManager.Components.PlayerSensorController;
-import com.game.PlayerManager.Sensor.AABBSensor;
-import com.game.PlayerManager.Sensor.Position;
+import com.game.EntityManager.Components.PlayerSensorController;
+import com.game.EntityManager.Sensor.AABBSensor;
 import com.game.LevelManager.Level;
 
 public class Player extends PhysicsSprite {
@@ -132,14 +131,14 @@ public class Player extends PhysicsSprite {
             if (Gdx.input.isKeyPressed(Input.Keys.D) && Gdx.input.isKeyPressed(Input.Keys.A)) {
                 body.setLinearVelocity(0, body.getLinearVelocity().y);
                 state = State.Halt;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(Position.BottemRight)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && !sensorController.getState(com.game.EntityManager.Sensor.Position.BottemRight)) {
                 if (body.getLinearVelocity().x < 0)
                     body.setLinearVelocity(0, body.getLinearVelocity().y);
                 if (body.getLinearVelocity().x < speed)
                     body.applyForceToCenter(30, 0, true);
                 state = State.Move;
                 isRight = true;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(com.game.EntityManager.Sensor.Position.BottemLeft)) {
                 if (body.getLinearVelocity().x > 0)
                     body.setLinearVelocity(0, body.getLinearVelocity().y);
                 if (body.getLinearVelocity().x > -speed)
@@ -153,12 +152,12 @@ public class Player extends PhysicsSprite {
             /**
              * Wall sliding
              */
-            if (Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(Position.TopLeft) && !sensorController.getState(Position.Bottem)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A) && sensorController.getState(com.game.EntityManager.Sensor.Position.TopLeft) && !sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem)) {
                 body.setLinearVelocity(body.getLinearVelocity().x, -slideVelocity);
                 state = State.Slide;
                 isRight = false;
                 inAir = false;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && sensorController.getState(Position.TopRight) && !sensorController.getState(Position.Bottem)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && sensorController.getState(com.game.EntityManager.Sensor.Position.TopRight) && !sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem)) {
                 body.setLinearVelocity(body.getLinearVelocity().x, -slideVelocity);
                 state = State.Slide;
                 isRight = true;
@@ -169,13 +168,13 @@ public class Player extends PhysicsSprite {
              */
             if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 
-            } else if (Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.getState(Position.Bottem) && !((sensorController.getState(Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem) && !((sensorController.getState(com.game.EntityManager.Sensor.Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.getState(com.game.EntityManager.Sensor.Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
                 body.setLinearVelocity(body.getLinearVelocity().x, 15f);
                 inAir = true;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem)) {
                 body.applyForceToCenter(0f,-dropForce,true);
                 inAir = true;
-            } else if (sensorController.getState(Position.Bottem)) {
+            } else if (sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem)) {
                 inAir = false;
             } else {
                 inAir = true;
@@ -185,7 +184,7 @@ public class Player extends PhysicsSprite {
     }
 
     private void chooseTexture() {
-        if (state != State.Slide && !sensorController.getState(Position.Bottem)) {
+        if (state != State.Slide && !sensorController.getState(com.game.EntityManager.Sensor.Position.Bottem)) {
             if (isRight)
                 setTexture(jumpRight);
             else

@@ -1,4 +1,4 @@
-package com.game.PlayerManager.Sensor;
+package com.game.EntityManager.Sensor;
 
 import java.util.ArrayList;
 

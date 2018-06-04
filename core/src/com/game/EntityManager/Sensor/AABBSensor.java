@@ -1,4 +1,4 @@
-package com.game.PlayerManager.Sensor;
+package com.game.EntityManager.Sensor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -40,6 +40,27 @@ public class AABBSensor {
         world.QueryAABB(callback,Math.min(lower.x,upper.x),Math.min(lower.y,upper.y),Math.max(upper.x,lower.x),Math.max(upper.y,lower.y));
         for(int x = 0; x < fixtures.size() ; x++){
             if(fixtures.get(x).getUserData().toString().equals("TileBox")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean inEnemy(Vector2 lowerPoint, Vector2 upperPoint){
+        fixtures.clear();
+        Vector2 lower = new Vector2(lowerPoint.x/GameMain.PPM,lowerPoint.y/GameMain.PPM);
+        Vector2 upper = new Vector2(upperPoint.x/GameMain.PPM,upperPoint.y/GameMain.PPM);
+
+        QueryCallback callback = new QueryCallback() {
+            @Override
+            public boolean reportFixture(Fixture fixture) {
+                fixtures.add(fixture);
+                return true;
+            }
+        };
+        world.QueryAABB(callback,Math.min(lower.x,upper.x),Math.min(lower.y,upper.y),Math.max(upper.x,lower.x),Math.max(upper.y,lower.y));
+        for(int x = 0; x < fixtures.size() ; x++){
+            if(fixtures.get(x).getUserData().toString().equals("Enemy")){
                 return true;
             }
         }

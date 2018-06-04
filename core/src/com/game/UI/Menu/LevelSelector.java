@@ -3,6 +3,7 @@ package com.game.UI.Menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -28,6 +29,7 @@ public class LevelSelector implements Screen {
     //scroll planes
     ScrollPane levelList;
     Table table = new Table(skin);
+    ThemedTextButton back = new ThemedTextButton("Return to MainMenu");
 
     public LevelSelector(GameMain game){
         this.game = game;
@@ -36,7 +38,6 @@ public class LevelSelector implements Screen {
     @Override
     public void show() {
         stage = new Stage();
-
         Gdx.input.setInputProcessor(stage);
 
         levels.add(new LevelDescriptor("Test",new FileHandle("Levels/Tester/lvl.tmx")));
@@ -51,16 +52,29 @@ public class LevelSelector implements Screen {
 
         levelList = new ScrollPane(table, skin);
         levelList.setBounds(0,0, GameMain.realRes.x,GameMain.realRes.y);
+
         stage.addActor(levelList);
+
+        Table t = new Table();
+        t.setFillParent(true);
+        t.top().right();
+        t.add(back).width(back.getWidth()*1.2f).height(back.getHeight()*1.2f).padTop(10).padRight(10);
+        stage.addActor(t);
     }
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(.22f, .05f, .33f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         for(int x = 0 ; x < buttons.size() ; x++){
             if(buttons.get(x).isPressed()){
                 game.setScreen(new Level(game,levels.get(x)));
             }
+        }
+
+        if(back.isPressed()){
+            game.setScreen(new MainMenuScreen(game));
         }
 
         stage.act();

@@ -128,6 +128,5 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         skin.dispose();
         atlas.dispose();
-
     }
 }

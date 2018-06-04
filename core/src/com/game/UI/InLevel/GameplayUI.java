@@ -24,6 +24,7 @@ import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
 import com.game.UI.Menu.Actors.ThemedTextButton;
 import com.game.UI.Menu.LevelSelector;
+import com.game.UI.Menu.MainMenuScreen;
 
 public class GameplayUI implements Updatable{
     Stage stage;
@@ -47,6 +48,7 @@ public class GameplayUI implements Updatable{
         ThemedTextButton resume = new ThemedTextButton("Resume");
         ThemedTextButton exit = new ThemedTextButton("Exit");
         ThemedTextButton levelselect = new ThemedTextButton("Levels");
+        ThemedTextButton mainMenu = new ThemedTextButton("MainMenu");
 
     ImageButton settingsButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/gear.png"))));
 
@@ -54,12 +56,16 @@ public class GameplayUI implements Updatable{
         settingsButton.setPosition(GameMain.realRes.x-settingsButton.getWidth(), GameMain.realRes.y-settingsButton.getHeight());
         pauseWindow.setPosition((GameMain.realRes.x/2)-(pauseWindow.getWidth()/2),(GameMain.realRes.y/2)-(pauseWindow.getHeight()/2));
         pauseWindow.setVisible(false);
-        pauseWindow.add(resume);
+        pauseWindow.add(resume).padBottom(3);
         pauseWindow.row();
-        pauseWindow.add(levelselect);
+        pauseWindow.add(mainMenu).padBottom(3);
         pauseWindow.row();
-        pauseWindow.add(exit);
+        pauseWindow.add(levelselect).padBottom(3);
         pauseWindow.row();
+        pauseWindow.add(exit).padBottom(3);
+        pauseWindow.row();
+        pauseWindow.setHeight(resume.getHeight()*5f);
+        pauseWindow.setWidth(resume.getWidth());
         stage.addActor(settingsButton);
         stage.addActor(pauseWindow);
     }
@@ -95,6 +101,10 @@ public class GameplayUI implements Updatable{
 
         if(exit.isPressed()){
             Gdx.app.exit();
+        }
+
+        if(mainMenu.isPressed()){
+            game.setScreen(new MainMenuScreen(game));
         }
 
         stage.act(Gdx.graphics.getDeltaTime());

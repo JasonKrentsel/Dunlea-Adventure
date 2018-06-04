@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="50" height="12" tilewidth="96" tileheight="96" infinite="0" nextobjectid="2">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="50" height="12" tilewidth="96" tileheight="96" infinite="0" nextobjectid="9">
  <tileset firstgid="1" source="sheet.tsx"/>
  <layer name="Tile Layer 1" width="50" height="12">
   <data encoding="csv">
@@ -13,13 +13,32 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+3,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 </data>
  </layer>
  <objectgroup name="Col">
   <object id="1" x="0" y="1056">
    <polyline points="0,0 0,96 4800,96 4800,0 0,0"/>
+  </object>
+  <object id="5" x="1056" y="1056">
+   <polyline points="0,0 0,-96 96,-96 96,0 0,0"/>
+  </object>
+  <object id="6" x="0" y="960">
+   <polyline points="0,0 96,0 96,96 0,96 0,0"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Enemy">
+  <object id="7" x="192" y="960">
+   <point/>
+  </object>
+  <object id="8" x="768" y="960">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Player">
+  <object id="2" name="Player" x="672" y="-288">
+   <point/>
   </object>
  </objectgroup>
 </map>
