@@ -32,8 +32,8 @@ public class GameMain extends Game {
 
 	public void create () {
 		batch = new SpriteBatch();
-		mainMenu = new MainMenuScreen(batch);
-		setScreen(new Level(this,new FileHandle("Levels/Tester/lvl.tmx")));
+		mainMenu = new MainMenuScreen(this);
+		setScreen(mainMenu);
 	}
 
 	public void render () {
