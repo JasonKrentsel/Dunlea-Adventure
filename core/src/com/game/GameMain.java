@@ -32,8 +32,13 @@ public class GameMain extends Game {
 
 	public void create () {
 		batch = new SpriteBatch();
+<<<<<<< HEAD
 		mainMenu = new MainMenuScreen(batch);
 		setScreen(new LevelSelector(this));
+=======
+		mainMenu = new MainMenuScreen(this);
+		setScreen(mainMenu);
+>>>>>>> Main-Menu
 	}
 
 	public void render () {
