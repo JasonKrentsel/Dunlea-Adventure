@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.game.TesterLvl.Level;
+import com.game.UI.Menu.LevelSelector;
 import com.game.UI.Menu.MainMenuScreen;
 
 import java.awt.GraphicsDevice;
@@ -33,7 +34,7 @@ public class GameMain extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		mainMenu = new MainMenuScreen(batch);
-		setScreen(new Level(this,new FileHandle("Levels/Tester/lvl.tmx")));
+		setScreen(new LevelSelector());
 	}
 
 	public void render () {
