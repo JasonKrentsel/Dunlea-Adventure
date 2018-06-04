@@ -16,7 +16,7 @@ import com.game.GameMain;
 import com.game.PlayerManager.Components.PlayerSensorController;
 import com.game.PlayerManager.Sensor.AABBSensor;
 import com.game.PlayerManager.Sensor.Position;
-import com.game.TesterLvl.Level;
+import com.game.LevelManager.Level;
 
 public class Player extends PhysicsSprite {
     /**
@@ -24,7 +24,7 @@ public class Player extends PhysicsSprite {
      */
     private float speed = 7;
     private float jumpSpeed = 15;
-    private float dropVelocity = 15;
+    private float dropForce = 17;
     private float slideVelocity = 2;
 
     /**
@@ -136,14 +136,14 @@ public class Player extends PhysicsSprite {
                 if (body.getLinearVelocity().x < 0)
                     body.setLinearVelocity(0, body.getLinearVelocity().y);
                 if (body.getLinearVelocity().x < speed)
-                    body.applyForceToCenter(40, 0, true);
+                    body.applyForceToCenter(30, 0, true);
                 state = State.Move;
                 isRight = true;
             } else if (Gdx.input.isKeyPressed(Input.Keys.A) && !sensorController.getState(Position.BottemLeft)) {
                 if (body.getLinearVelocity().x > 0)
                     body.setLinearVelocity(0, body.getLinearVelocity().y);
                 if (body.getLinearVelocity().x > -speed)
-                    body.applyForceToCenter(-40, 0, true);
+                    body.applyForceToCenter(-30, 0, true);
                 state = State.Move;
                 isRight = false;
             } else {
@@ -173,7 +173,7 @@ public class Player extends PhysicsSprite {
                 body.setLinearVelocity(body.getLinearVelocity().x, 15f);
                 inAir = true;
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.getState(Position.Bottem)) {
-                body.setLinearVelocity(body.getLinearVelocity().x, -dropVelocity);
+                body.applyForceToCenter(0f,-dropForce,true);
                 inAir = true;
             } else if (sensorController.getState(Position.Bottem)) {
                 inAir = false;

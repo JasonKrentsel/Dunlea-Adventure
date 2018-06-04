@@ -1,9 +1,10 @@
-package com.game.LevelManagment;
+package com.game.LevelManager;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -22,10 +23,16 @@ import com.game.GameMain;
 public class TileMap {
     TiledMap map;
     OrthogonalTiledMapRenderer renderer;
+    MapProperties aspects;
+    public Vector2 mapSize = new Vector2();
 
     public TileMap(String filePath, World world) {
         map = new TmxMapLoader().load(filePath);
         renderer = new OrthogonalTiledMapRenderer(map);
+        aspects = map.getProperties();
+        mapSize.set(aspects.get("width", Integer.class),aspects.get("height", Integer.class));
+        mapSize.scl(96f);
+        System.out.println(mapSize);
         buildShapes(map,world);
     }
 

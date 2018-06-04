@@ -1,6 +1,5 @@
-package com.game.TesterLvl;
+package com.game.LevelManager;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -13,14 +12,11 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.game.PlayerManager.Player;
 import com.game.GameMain;
-import com.game.LevelManagment.TileMap;
 import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
 import com.game.UI.InLevel.GameplayUI;
 
 import java.util.ArrayList;
-
-import javax.management.monitor.GaugeMonitor;
 
 public class Level implements Screen {
 
@@ -31,7 +27,7 @@ public class Level implements Screen {
     TileMap tileMap;
     GameMain game;
 
-    public GameplayUI ui = new GameplayUI(new Stage());
+    public GameplayUI ui;
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
@@ -39,12 +35,34 @@ public class Level implements Screen {
     public Level(GameMain game, FileHandle mapTmx) {
         this.batch = game.batch;
         this.game = game;
+
+        ui = new GameplayUI(game,new Stage());
+
         // setting camera up
         camera.position.set(GameMain.WIDTH / 2, GameMain.HEIGHT / 2, 0);
         batch.setProjectionMatrix(camera.combined);
         // creating physics world and the tile map
         world = new World(new Vector2(0, -9.8f * 3f), true);
         tileMap = new TileMap(mapTmx.path(), world);
+        // creating player
+        p = new Player(this, 300, 100);
+
+        spriteList.add(p);
+        updateList.add(ui);
+    }
+
+    public Level(GameMain game, LevelDescriptor levelDescription){
+        this.batch = game.batch;
+        this.game = game;
+
+        ui = new GameplayUI(game,new Stage());
+
+        // setting camera up
+        camera.position.set(GameMain.WIDTH / 2, GameMain.HEIGHT / 2, 0);
+        batch.setProjectionMatrix(camera.combined);
+        // creating physics world and the tile map
+        world = new World(new Vector2(0, -9.8f * 3f), true);
+        tileMap = new TileMap(levelDescription.tmxLocation.path(), world);
         // creating player
         p = new Player(this, 300, 100);
 
@@ -67,9 +85,7 @@ public class Level implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         updateCamera();
-
         tileMap.render(camera);
-
         batch.begin();
         for(DrawUpdatable sprite: spriteList){
             sprite.update(batch);
@@ -78,21 +94,28 @@ public class Level implements Screen {
         for(Updatable u: updateList){
             u.update();
         }
-
         // iterates the physics simulation
         if(!ui.isPaused())
             world.step(Gdx.graphics.getDeltaTime(), 6, 2);
     }
 
     private void updateCamera(){
-        if(p.getMidpoint().x > GameMain.WIDTH/2)
-            pX = p.getMidpoint().x;
-        else
+        if(p.getMidpoint().x < GameMain.WIDTH/2){
             pX = GameMain.WIDTH/2;
-        if(p.getMidpoint().y > GameMain.HEIGHT/2)
-            pY = p.getMidpoint().y;
-        else
-            pY = GameMain.HEIGHT/2;
+        }else if(p.getMidpoint().x > tileMap.mapSize.x-GameMain.WIDTH/2){
+            pX = tileMap.mapSize.x-GameMain.WIDTH/2;
+        }else{
+            pX = p.getMidpoint().x;
+        }
+
+        if(p.getMidpoint().y < GameMain.HEIGHT/2){
+            pX = GameMain.HEIGHT/2;
+        }else if(p.getMidpoint().y > tileMap.mapSize.y-GameMain.HEIGHT/2){
+            pX = tileMap.mapSize.y-GameMain.HEIGHT/2;
+        }else{
+            pX = p.getMidpoint().y;
+        }
+
         camera.position.lerp(new Vector3(pX,pY,0),.1f);
         batch.setProjectionMatrix(camera.combined);
         camera.update(true);

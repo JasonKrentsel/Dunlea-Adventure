@@ -1,21 +1,20 @@
 package com.game.UI.Menu.Actors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class ThemedTextButton extends ImageButton {
-    String text;
-    BitmapFont font;
-    public ThemedTextButton(String text, ImageButtonStyle style, BitmapFont font) {
-        super(style);
-        this.text = text;
-        this.font = font;
-    }
-
-    @Override
-    public void draw(Batch batch, float paremtAlpha){
-        super.draw(batch,paremtAlpha);
-        font.draw(batch,text,getX()+getWidth()/2,getY()+getHeight()/2,getWidth(),text.length(),false);
+public class ThemedTextButton extends TextButton {
+    public ThemedTextButton(String text) {
+        super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),new TextureRegionDrawable(new TextureRegion(new Texture("Menu/buttonHover.png"))),null,new BitmapFont(new FileHandle("Menu/Font/font.fnt"))));
     }
 }

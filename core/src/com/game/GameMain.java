@@ -2,10 +2,8 @@ package com.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.game.TesterLvl.Level;
 import com.game.UI.Menu.LevelSelector;
 import com.game.UI.Menu.MainMenuScreen;
 
@@ -23,6 +21,7 @@ public class GameMain extends Game {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		realRes.set(gd.getDisplayMode().getWidth(),gd.getDisplayMode().getHeight());
 	}
+
 	/**
 	 * PPM or pixels per inch:
 	 * Box2d is not the best physics engine and each pixel is treated as a meter.
@@ -34,7 +33,7 @@ public class GameMain extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		mainMenu = new MainMenuScreen(batch);
-		setScreen(new LevelSelector());
+		setScreen(new LevelSelector(this));
 	}
 
 	public void render () {

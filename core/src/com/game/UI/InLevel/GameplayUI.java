@@ -22,16 +22,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.game.GameMain;
 import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
+import com.game.UI.Menu.Actors.ThemedTextButton;
+import com.game.UI.Menu.LevelSelector;
 
 public class GameplayUI implements Updatable{
     Stage stage;
+    GameMain game;
     Skin skin = new Skin(new FileHandle("default/skin/uiskin.json"));
     BitmapFont font = new BitmapFont();
 
     private boolean isPaused;
 
-    public GameplayUI(Stage UIstage){
+    public GameplayUI(GameMain game,Stage UIstage){
         stage = UIstage;
+        this.game = game;
         Gdx.input.setInputProcessor(stage);
         create();
     }
@@ -40,15 +44,19 @@ public class GameplayUI implements Updatable{
      * Buttons and stuff
      */
     Window pauseWindow = new Window("Paused",skin);
-        TextButton resume = new TextButton("Resume",skin);
-        TextButton exit = new TextButton("Exit",skin);
+        ThemedTextButton resume = new ThemedTextButton("Resume");
+        ThemedTextButton exit = new ThemedTextButton("Exit");
+        ThemedTextButton levelselect = new ThemedTextButton("Levels");
 
     ImageButton settingsButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/gear.png"))));
+
     private void create(){
-        settingsButton.setPosition(GameMain.WIDTH-settingsButton.getWidth(), GameMain.HEIGHT-settingsButton.getHeight());
-        pauseWindow.setPosition((GameMain.WIDTH/2)-(pauseWindow.getWidth()/2),(GameMain.HEIGHT/2)-(pauseWindow.getHeight()/2));
+        settingsButton.setPosition(GameMain.realRes.x-settingsButton.getWidth(), GameMain.realRes.y-settingsButton.getHeight());
+        pauseWindow.setPosition((GameMain.realRes.x/2)-(pauseWindow.getWidth()/2),(GameMain.realRes.y/2)-(pauseWindow.getHeight()/2));
         pauseWindow.setVisible(false);
         pauseWindow.add(resume);
+        pauseWindow.row();
+        pauseWindow.add(levelselect);
         pauseWindow.row();
         pauseWindow.add(exit);
         pauseWindow.row();
@@ -80,6 +88,15 @@ public class GameplayUI implements Updatable{
         else {
             elapsedPaused = 0;
         }
+
+        if(levelselect.isPressed()){
+            game.setScreen(new LevelSelector(game));
+        }
+
+        if(exit.isPressed()){
+            Gdx.app.exit();
+        }
+
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
