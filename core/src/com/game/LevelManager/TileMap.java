@@ -32,7 +32,6 @@ public class TileMap {
         aspects = map.getProperties();
         mapSize.set(aspects.get("width", Integer.class),aspects.get("height", Integer.class));
         mapSize.scl(96f);
-        System.out.println(mapSize);
         buildShapes(map,world);
     }
 

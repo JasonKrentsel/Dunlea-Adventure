@@ -109,11 +109,11 @@ public class Level implements Screen {
         }
 
         if(p.getMidpoint().y < GameMain.HEIGHT/2){
-            pX = GameMain.HEIGHT/2;
+            pY = GameMain.HEIGHT/2;
         }else if(p.getMidpoint().y > tileMap.mapSize.y-GameMain.HEIGHT/2){
-            pX = tileMap.mapSize.y-GameMain.HEIGHT/2;
+            pY = tileMap.mapSize.y-GameMain.HEIGHT/2;
         }else{
-            pX = p.getMidpoint().y;
+            pY = p.getMidpoint().y;
         }
 
         camera.position.lerp(new Vector3(pX,pY,0),.1f);

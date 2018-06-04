@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,6 +20,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ThemedTextButton extends TextButton {
     public ThemedTextButton(String text) {
-        super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),new TextureRegionDrawable(new TextureRegion(new Texture("Menu/buttonHover.png"))),null,new BitmapFont(new FileHandle("Menu/Font/font.fnt"))));
+        super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt"))));
+        final TextButtonStyle a = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt")));
+        final TextButtonStyle s = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/buttonHover.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt")));
+        addListener(new InputListener(){
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                setStyle(s);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                setStyle(a);
+            }
+        });
     }
 }
