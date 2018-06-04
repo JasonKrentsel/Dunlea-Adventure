@@ -1,14 +1,17 @@
 package com.game.LevelManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.game.EntityManager.Enemy;
@@ -19,6 +22,8 @@ import com.game.StateUpdate.Updatable;
 import com.game.UI.InLevel.GameplayUI;
 
 import java.util.ArrayList;
+
+import javax.print.attribute.standard.PrinterLocation;
 
 public class Level implements Screen {
 
@@ -80,8 +85,12 @@ public class Level implements Screen {
     public void show() {
         pX = p.getMidpoint().x;
         pY = p.getMidpoint().y;
+
+        sr.setAutoShapeType(true);
     }
 
+    ShapeRenderer sr = new ShapeRenderer();
+    Box2DDebugRenderer debug = new Box2DDebugRenderer();
 
     float pY;
     float pX;
@@ -90,6 +99,10 @@ public class Level implements Screen {
         // needed to clear each frame and have a default background color
         Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        Matrix4 matrix4 = new Matrix4(camera.combined);
+        matrix4.scl(100);
+        debug.render(world,matrix4);
 
         updateCamera();
         tileMap.render(camera);
@@ -101,9 +114,31 @@ public class Level implements Screen {
         for(Updatable u: updateList){
             u.update();
         }
+
+        sr.setProjectionMatrix(camera.combined);
+        sr.begin();
+        for(DrawUpdatable a : spriteList){
+            if(a instanceof Enemy){
+                ((Enemy) a).sensorController.drawSensorBoxes(sr);
+            }
+            if(a instanceof Player){
+                ((Player)a).punchSensor.drawSensorBoxes(sr);
+            }
+        }
+        sr.end();
+
         // iterates the physics simulation
-        if(!ui.isPaused())
+        if(!ui.isPaused()) {
             world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+            for(int y = spriteList.size()-1; y >= 0 ; y--){
+                if(spriteList.get(y) instanceof Enemy){
+                    if(((Enemy)spriteList.get(y)).isDead()){
+                        world.destroyBody(((Enemy) spriteList.get(y)).body);
+                        spriteList.remove(spriteList.get(y));
+                    }
+                }
+            }
+        }
     }
 
     private void updateCamera(){

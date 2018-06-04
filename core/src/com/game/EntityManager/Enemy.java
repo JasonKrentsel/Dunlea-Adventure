@@ -23,6 +23,7 @@ public class Enemy extends PhysicsSprite{
 
     public EnemySensorController sensorController = new EnemySensorController(this);
     Level lvl;
+    Fixture fixture;
 
     public Enemy(Level level, World world, float x, float y) {
         super("Enemy",new Texture("Enemy/Flopper/Right/F0.png"),world,x,y,true);
@@ -42,7 +43,8 @@ public class Enemy extends PhysicsSprite{
         fd.density = 1;
         fd.friction = 0;
         fd.shape = shape;
-        Fixture fixture = body.createFixture(fd);
+        body.setUserData(this);
+        fixture = body.createFixture(fd);
         fixture.setUserData(name);
         shape.dispose();
     }
@@ -50,18 +52,21 @@ public class Enemy extends PhysicsSprite{
     @Override
     public void update(SpriteBatch batch) {
         super.update(batch);
+        sensorController.updatePos(Position.BottemLeft);
+        sensorController.updatePos(Position.BottemRight);
         if(!lvl.ui.isPaused())
-        move();
+            move();
     }
 
     float elapsed = 0;
     int isRight = 1;
     public void move(){
         elapsed += Gdx.graphics.getDeltaTime();
-        if(sensorController.getState(Position.BottemLeft)){
+
+        if(sensorController.getState(Position.TopLeft) || !sensorController.getState(Position.BottemLeft)){
             isRight = 1;
         }
-        if(sensorController.getState(Position.BottemRight)){
+        if(sensorController.getState(Position.TopRight) || !sensorController.getState(Position.BottemRight)){
             isRight = -1;
         }
 
@@ -71,5 +76,15 @@ public class Enemy extends PhysicsSprite{
             setTexture(left.getKeyFrame(elapsed,true));
 
         body.setLinearVelocity(3f*isRight,body.getLinearVelocity().y);
+    }
+
+    boolean dead = false;
+
+    public void kill(){
+        dead = true;
+    }
+
+    public boolean isDead(){
+        return dead;
     }
 }

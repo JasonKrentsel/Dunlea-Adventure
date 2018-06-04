@@ -3,7 +3,9 @@ package com.game.EntityManager.Components;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.game.EntityManager.Enemy;
 import com.game.EntityManager.Sensor.AABBSensor;
 import com.game.EntityManager.Sensor.PositionStorage;
 
@@ -47,7 +49,7 @@ public class PlayerSensorController {
                 sensorBoxes.get(position).set(player.getX() + 20, player.getY() + player.getHeight() - 6, player.getWidth() - 40, 1);
                 break;
             case Bottem:
-                sensorBoxes.get(position).set(player.getX() + 18, player.getY() + 3, player.getWidth() - 36, 1);
+                sensorBoxes.get(position).set(player.getX() + 30, player.getY() + 3, player.getWidth() - 60, 1);
                 break;
             case TopLeft:
                 sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + player.getHeight() - 15, 1, 5);
@@ -64,18 +66,27 @@ public class PlayerSensorController {
         }
     }
 
-    public boolean getState(com.game.EntityManager.Sensor.Position position) {
+    public boolean isInTile(com.game.EntityManager.Sensor.Position position) {
         Rectangle rec;
         updatePos(position);
         rec = sensorBoxes.get(position);
         return sensor.inTile(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height));
     }
 
+    public Enemy isInEnemy(com.game.EntityManager.Sensor.Position position) {
+        Rectangle rec;
+        updatePos(position);
+        rec = sensorBoxes.get(position);
+        if(sensor.inEnemyObject(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height))==null)
+            return null;
+        return (Enemy)sensor.inEnemyObject(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height)).getUserData();
+    }
+
     @Override
     public String toString() {
         String o = "";
         for(com.game.EntityManager.Sensor.Position pos : com.game.EntityManager.Sensor.Position.values()){
-            o+=pos.toString()+" "+getState(pos)+"     ";
+            o+=pos.toString()+" "+isInTile(pos)+"     ";
         }
         return o;
     }

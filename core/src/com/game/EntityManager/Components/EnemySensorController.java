@@ -20,8 +20,10 @@ public class EnemySensorController {
         world = enemy.world;
         sensor = new AABBSensor(world);
         sensorBoxes = new PositionStorage<Rectangle>();
+        sensorBoxes.set(Position.TopLeft, new Rectangle());
+        sensorBoxes.set(Position.TopRight, new Rectangle());
         sensorBoxes.set(Position.BottemLeft, new Rectangle());
-        sensorBoxes.set(Position.BottemRight, new Rectangle());
+        sensorBoxes.set(Position.TopLeft.BottemRight,new Rectangle());
         updateAll();
     }
 
@@ -41,11 +43,17 @@ public class EnemySensorController {
 
     public void updatePos(com.game.EntityManager.Sensor.Position position) {
         switch (position) {
+            case TopLeft:
+                sensorBoxes.get(position).set(enemy.getX()-15, enemy.getY() + (enemy.getHeight()/2-5), 14, 10);
+                break;
+            case TopRight:
+                sensorBoxes.get(position).set(enemy.getX()+enemy.getWidth()+1, enemy.getY() + (enemy.getHeight()/2-5), 14, 10);
+                break;
             case BottemLeft:
-                sensorBoxes.get(position).set(enemy.getX()-15, enemy.getY() + (enemy.getHeight()/2-1), 1, 2);
+                sensorBoxes.get(position).set(enemy.getX()-15, enemy.getY() -10, 10, 1);
                 break;
             case BottemRight:
-                sensorBoxes.get(position).set(enemy.getX()+enemy.getWidth()+15, enemy.getY() + (enemy.getHeight()/2-1), 1, 2);
+                sensorBoxes.get(position).set(enemy.getX()+enemy.getWidth()+15, enemy.getY() -10, 10, 1);
                 break;
         }
     }
