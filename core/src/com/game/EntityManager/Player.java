@@ -100,13 +100,11 @@ public class Player extends PhysicsSprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-
-        if(sensorController.isInEnemy(Position.Bottem)!=null){
-            sensorController.isInEnemy(Position.Bottem).kill();
-            body.setLinearVelocity(body.getLinearVelocity().x, 15f);
+        if(sensorController.isOnEnemy() && inAir){
+            sensorController.isInEnemy().kill();
+            body.setLinearVelocity(body.getLinearVelocity().x, 15);
             inAir = true;
         }
-        punchSensor.updatePos();
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
                 if(punchSensor.isInEnemy(isRight)!=null){
                     punchSensor.isInEnemy(isRight).kill();

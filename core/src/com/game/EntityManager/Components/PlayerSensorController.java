@@ -14,7 +14,7 @@ public class PlayerSensorController {
     World world;
     AABBSensor sensor;
     PositionStorage<Rectangle> sensorBoxes;
-
+    Rectangle enemyDetector = new Rectangle();
     public PlayerSensorController(com.game.EntityManager.Player player) {
         this.player = player;
         world = player.world;
@@ -35,6 +35,7 @@ public class PlayerSensorController {
                 shapeRenderer.rect(rec.x, rec.y, rec.width, rec.height);
             }
         }
+        shapeRenderer.rect(enemyDetector.x,enemyDetector.y,enemyDetector.width,enemyDetector.height);
     }
 
     private void updateAll() {
@@ -49,7 +50,7 @@ public class PlayerSensorController {
                 sensorBoxes.get(position).set(player.getX() + 20, player.getY() + player.getHeight() - 6, player.getWidth() - 40, 1);
                 break;
             case Bottem:
-                sensorBoxes.get(position).set(player.getX() + 30, player.getY() + 3, player.getWidth() - 60, 1);
+                sensorBoxes.get(position).set(player.getX() + 20, player.getY() + 3, player.getWidth() - 40, 1);
                 break;
             case TopLeft:
                 sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + player.getHeight() - 15, 1, 5);
@@ -73,13 +74,16 @@ public class PlayerSensorController {
         return sensor.inTile(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height));
     }
 
-    public Enemy isInEnemy(com.game.EntityManager.Sensor.Position position) {
-        Rectangle rec;
-        updatePos(position);
-        rec = sensorBoxes.get(position);
-        if(sensor.inEnemyObject(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height))==null)
+    public Enemy isInEnemy() {
+        isOnEnemy();
+        if(sensor.inEnemyObject(new Vector2(enemyDetector.x, enemyDetector.y), new Vector2(enemyDetector.x + enemyDetector.width, enemyDetector.y + enemyDetector.height))==null)
             return null;
-        return (Enemy)sensor.inEnemyObject(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height)).getUserData();
+        return (Enemy)sensor.inEnemyObject(new Vector2(enemyDetector.x, enemyDetector.y), new Vector2(enemyDetector.x + enemyDetector.width, enemyDetector.y + enemyDetector.height)).getUserData();
+    }
+
+    public boolean isOnEnemy(){
+        enemyDetector.set(player.getX()+20,player.getY(),player.getWidth()-40,-1);
+        return sensor.inEnemy(new Vector2(enemyDetector.x,enemyDetector.y),new Vector2(enemyDetector.x+enemyDetector.width,enemyDetector.y+enemyDetector.height));
     }
 
     @Override

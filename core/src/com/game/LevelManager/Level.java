@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
@@ -91,6 +92,7 @@ public class Level implements Screen {
 
     ShapeRenderer sr = new ShapeRenderer();
     Box2DDebugRenderer debug = new Box2DDebugRenderer();
+    BitmapFont font = new BitmapFont();
 
     float pY;
     float pX;
@@ -119,9 +121,12 @@ public class Level implements Screen {
         sr.begin();
         for(DrawUpdatable a : spriteList){
             if(a instanceof Enemy){
-                ((Enemy) a).sensorController.drawSensorBoxes(sr);
+                batch.begin();
+                ((Enemy) a).sensorController.drawSensorBoxes(sr,font,batch);
+                batch.end();
             }
             if(a instanceof Player){
+                ((Player)a).sensorController.drawSensorBoxes(sr);
                 ((Player)a).punchSensor.drawSensorBoxes(sr);
             }
         }

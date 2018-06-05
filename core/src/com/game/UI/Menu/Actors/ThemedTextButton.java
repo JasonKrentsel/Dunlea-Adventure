@@ -28,7 +28,6 @@ public class ThemedTextButton extends TextButton {
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 setStyle(s);
             }
-
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 setStyle(a);

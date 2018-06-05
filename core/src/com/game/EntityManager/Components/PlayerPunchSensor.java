@@ -22,7 +22,8 @@ public class PlayerPunchSensor {
         this.player = player;
         world = player.world;
         sensor = new AABBSensor(world);
-        updatePos();
+        updatePos(false);
+        updatePos(true);
     }
 
     public void drawSensorBoxes(ShapeRenderer shapeRenderer) {
@@ -30,17 +31,19 @@ public class PlayerPunchSensor {
         shapeRenderer.rect(left.x,left.y,left.width,left.height);
     }
 
-    public void updatePos() {
-        right.set(player.getX()-21,player.getY()+player.getHeight()/2-15,20,20);
-        left.set(player.getX()+player.getWidth()+1,player.getY()+player.getHeight()/2-15,20,20);
+    public void updatePos(Boolean isRight) {
+        if(isRight)
+        right.set(player.getX()-30,player.getY()+player.getHeight()/2-15,40,20);
+        else
+        left.set(player.getX()+player.getWidth()-10,player.getY()+player.getHeight()/2-15,40,20);
     }
 
 
     public Enemy isInEnemy(boolean isRight) {
         Rectangle rec;
-        updatePos();
+        updatePos(!isRight);
 
-        if(isRight)
+        if(!isRight)
             rec = right;
         else
             rec = left;

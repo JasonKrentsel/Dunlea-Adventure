@@ -41,7 +41,7 @@ public class Enemy extends PhysicsSprite{
         body.setFixedRotation(true);
         FixtureDef fd = new FixtureDef();
         fd.density = 1;
-        fd.friction = 0;
+        fd.friction = 1;
         fd.shape = shape;
         body.setUserData(this);
         fixture = body.createFixture(fd);
@@ -63,10 +63,10 @@ public class Enemy extends PhysicsSprite{
     public void move(){
         elapsed += Gdx.graphics.getDeltaTime();
 
-        if(sensorController.getState(Position.TopLeft) || !sensorController.getState(Position.BottemLeft)){
+        if(body.getLinearVelocity().x==0 || !sensorController.getState(Position.BottemLeft)){
             isRight = 1;
         }
-        if(sensorController.getState(Position.TopRight) || !sensorController.getState(Position.BottemRight)){
+        if(body.getLinearVelocity().x==0 || !sensorController.getState(Position.BottemRight)){
             isRight = -1;
         }
 
@@ -75,7 +75,7 @@ public class Enemy extends PhysicsSprite{
         else
             setTexture(left.getKeyFrame(elapsed,true));
 
-        body.setLinearVelocity(3f*isRight,body.getLinearVelocity().y);
+        body.setLinearVelocity(2f*isRight,body.getLinearVelocity().y);
     }
 
     boolean dead = false;
