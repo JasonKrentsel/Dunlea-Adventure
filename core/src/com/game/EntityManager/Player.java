@@ -27,6 +27,7 @@ public class Player extends PhysicsSprite {
     private float jumpSpeed = 15;
     private float dropForce = 17;
     private float slideVelocity = 2;
+    private boolean immune = true;
 
     /**
      * various animations and textures for Dunlea in certain situations
@@ -39,6 +40,7 @@ public class Player extends PhysicsSprite {
     private final Texture slideLeft = new Texture("dunlea/slide/slideLeft.png");
     private final Texture jumpRight = new Texture("dunlea/jump/jumpRight.png");
     private final Texture jumpLeft = new Texture("dunlea/jump/jumpLeft.png");
+    private final Texture invis = new Texture("dunlea/invis.png");
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
@@ -195,15 +197,8 @@ public class Player extends PhysicsSprite {
             chooseTexture();
         }
     }
-
+    float elapsedFlash = 0;
     private void chooseTexture() {
-        if (state != State.Slide && !sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem)) {
-            if (isRight)
-                setTexture(jumpRight);
-            else
-                setTexture(jumpLeft);
-            return;
-        }
         switch (state) {
             case Slide:
                 if (isRight)
@@ -223,6 +218,19 @@ public class Player extends PhysicsSprite {
                 else
                     setTexture(runLeft.getKeyFrame(elapsed, true));
                 break;
+        }
+        if (state != State.Slide && !sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem)) {
+            if (isRight)
+                setTexture(jumpRight);
+            else
+                setTexture(jumpLeft);
+        }
+        if(immune){
+            elapsedFlash+=Gdx.graphics.getDeltaTime();
+            float x = elapsedFlash-(int)elapsedFlash;
+            int y = (int)(x*5);
+            if(y%2==0)
+                setTexture(invis);
         }
     }
 

@@ -19,10 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ThemedTextButton extends TextButton {
+    public static final BitmapFont font = new BitmapFont((Gdx.files.internal("Menu/Font/font.fnt")));
+
     public ThemedTextButton(String text) {
-        super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt"))));
-        final TextButtonStyle a = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt")));
-        final TextButtonStyle s = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/buttonHover.png"))),null,null,new BitmapFont(new FileHandle("Menu/Font/font.fnt")));
+        super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,font));
+        final TextButtonStyle a = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,font);
+        final TextButtonStyle s = new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/buttonHover.png"))),null,null,font);
         addListener(new InputListener(){
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
