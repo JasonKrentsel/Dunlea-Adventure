@@ -79,6 +79,7 @@ public class Enemy extends PhysicsSprite{
     }
 
     boolean dead = false;
+    public boolean killed = false;
 
     public void kill(){
         dead = true;

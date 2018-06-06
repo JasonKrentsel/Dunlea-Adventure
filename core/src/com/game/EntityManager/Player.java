@@ -27,7 +27,7 @@ public class Player extends PhysicsSprite {
     private float jumpSpeed = 15;
     private float dropForce = 17;
     private float slideVelocity = 2;
-    private boolean immune = true;
+    private boolean immune = false;
 
     /**
      * various animations and textures for Dunlea in certain situations
@@ -41,6 +41,9 @@ public class Player extends PhysicsSprite {
     private final Texture jumpRight = new Texture("dunlea/jump/jumpRight.png");
     private final Texture jumpLeft = new Texture("dunlea/jump/jumpLeft.png");
     private final Texture invis = new Texture("dunlea/invis.png");
+
+    private final Animation<Texture> punchRight = new Animation<Texture>(.08f,new Texture("dunlea/punchRight/F0.gif"),new Texture("dunlea/punchRight/F1.gif"),new Texture("dunlea/punchRight/F2.gif"));
+    private final Animation<Texture> punchLeft = new Animation<Texture>(.08f,new Texture("dunlea/punchLeft/F0.gif"),new Texture("dunlea/punchLeft/F1.gif"),new Texture("dunlea/punchLeft/F2.gif"));
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
@@ -91,6 +94,8 @@ public class Player extends PhysicsSprite {
         draw(batch);
     }
 
+    float punchElapsed = 0;
+    boolean isPunching;
     /**
      * draws Dunlea's correct texture as well as:
      * updating elapsed time
@@ -101,16 +106,30 @@ public class Player extends PhysicsSprite {
      */
     @Override
     public void draw(Batch batch) {
-        super.draw(batch);
+        punchElapsed += Gdx.graphics.getDeltaTime();
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x<4){
+            punchElapsed = 0;
+            if(punchSensor.isInEnemy(isRight)!=null){
+                punchSensor.isInEnemy(isRight).kill();
+            }
+        }
+
+        if(punchElapsed>.2 || inAir) {
+            super.draw(batch);
+            isPunching = false;
+        }else{
+            isPunching = true;
+            super.updateSprite();
+            if(isRight)
+                batch.draw(punchRight.getKeyFrame(elapsed,true),getX(),getY());
+            else
+                batch.draw(punchLeft.getKeyFrame(elapsed,true),getX()-20,getY());
+        }
+
         if(sensorController.isOnEnemy() && inAir){
             sensorController.isInEnemy().kill();
             body.setLinearVelocity(body.getLinearVelocity().x, 15);
             inAir = true;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                if(punchSensor.isInEnemy(isRight)!=null){
-                    punchSensor.isInEnemy(isRight).kill();
-                }
         }
 
         if (getY() < -500) {
@@ -194,7 +213,8 @@ public class Player extends PhysicsSprite {
             } else {
                 inAir = true;
             }
-            chooseTexture();
+            if(!isPunching)
+                chooseTexture();
         }
     }
     float elapsedFlash = 0;
@@ -228,8 +248,8 @@ public class Player extends PhysicsSprite {
         if(immune){
             elapsedFlash+=Gdx.graphics.getDeltaTime();
             float x = elapsedFlash-(int)elapsedFlash;
-            int y = (int)(x*5);
-            if(y%2==0)
+            int y = (int)(x*100);
+            if(y%3==0)
                 setTexture(invis);
         }
     }

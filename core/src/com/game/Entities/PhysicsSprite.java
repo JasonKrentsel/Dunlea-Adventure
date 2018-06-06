@@ -57,7 +57,7 @@ public class PhysicsSprite extends Sprite implements DrawUpdatable{
     /**
      * Updates the sprites position and rotation based on the body
      */
-    private void updateSprite(){
+    protected void updateSprite(){
         setPosition((body.getPosition().x)*GameMain.PPM-getWidth()/2,(body.getPosition().y)*GameMain.PPM-getHeight()/2);
         setRotation((float)Math.toDegrees((double) body.getAngle()));
     }

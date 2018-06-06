@@ -87,12 +87,7 @@ public class Level implements Screen {
         pX = p.getMidpoint().x;
         pY = p.getMidpoint().y;
 
-        sr.setAutoShapeType(true);
     }
-
-    ShapeRenderer sr = new ShapeRenderer();
-    Box2DDebugRenderer debug = new Box2DDebugRenderer();
-    BitmapFont font = new BitmapFont();
 
     float pY;
     float pX;
@@ -101,10 +96,6 @@ public class Level implements Screen {
         // needed to clear each frame and have a default background color
         Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        Matrix4 matrix4 = new Matrix4(camera.combined);
-        matrix4.scl(100);
-        debug.render(world,matrix4);
 
         updateCamera();
         tileMap.render(camera);
@@ -117,29 +108,15 @@ public class Level implements Screen {
             u.update();
         }
 
-        sr.setProjectionMatrix(camera.combined);
-        sr.begin();
-        for(DrawUpdatable a : spriteList){
-            if(a instanceof Enemy){
-                batch.begin();
-                ((Enemy) a).sensorController.drawSensorBoxes(sr,font,batch);
-                batch.end();
-            }
-            if(a instanceof Player){
-                ((Player)a).sensorController.drawSensorBoxes(sr);
-                ((Player)a).punchSensor.drawSensorBoxes(sr);
-            }
-        }
-        sr.end();
-
         // iterates the physics simulation
         if(!ui.isPaused()) {
             world.step(Gdx.graphics.getDeltaTime(), 6, 2);
             for(int y = spriteList.size()-1; y >= 0 ; y--){
                 if(spriteList.get(y) instanceof Enemy){
-                    if(((Enemy)spriteList.get(y)).isDead()){
+                    if(((Enemy)spriteList.get(y)).isDead() && !((Enemy)spriteList.get(y)).killed){
+                        ((Enemy)spriteList.get(y)).killed = true;
+                        ((Enemy)spriteList.get(y)).kill();
                         world.destroyBody(((Enemy) spriteList.get(y)).body);
-                        spriteList.remove(spriteList.get(y));
                     }
                 }
             }

@@ -46,7 +46,7 @@ public class LevelSelector implements Screen {
         for (int x = 0; x < levels.size(); x++) {
             buttons.add(new ThemedTextButton(levels.get(x).name));
             buttons.get(x).getLabel().setFontScale(2,2);
-            table.add(buttons.get(x)).width(buttons.get(x).getWidth()*2).height(buttons.get(x).getHeight()*2);
+            table.add(buttons.get(x)).width(buttons.get(x).getWidth()*2).height(buttons.get(x).getHeight()*2).padBottom(5);
             table.row();
         }
 
