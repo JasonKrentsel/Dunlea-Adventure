@@ -27,8 +27,7 @@ public class Player extends PhysicsSprite {
     private float jumpSpeed = 15;
     private float dropForce = 17;
     private float slideVelocity = 2;
-    private boolean immune = false;
-
+    private boolean immune = true;
     /**
      * various animations and textures for Dunlea in certain situations
      */
@@ -128,7 +127,7 @@ public class Player extends PhysicsSprite {
 
         if(sensorController.isOnEnemy() && inAir){
             sensorController.isInEnemy().kill();
-            body.setLinearVelocity(body.getLinearVelocity().x, 15);
+            body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
             inAir = true;
         }
 
@@ -203,7 +202,7 @@ public class Player extends PhysicsSprite {
             if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 
             } else if (Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem) && !((sensorController.isInTile(com.game.EntityManager.Sensor.Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.isInTile(com.game.EntityManager.Sensor.Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
-                body.setLinearVelocity(body.getLinearVelocity().x, 15f);
+                body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
                 inAir = true;
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem)) {
                 body.applyForceToCenter(0f,-dropForce,true);

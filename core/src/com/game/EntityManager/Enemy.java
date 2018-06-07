@@ -3,7 +3,6 @@ package com.game.EntityManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -15,11 +14,11 @@ import com.game.EntityManager.Components.EnemySensorController;
 import com.game.EntityManager.Sensor.Position;
 import com.game.GameMain;
 import com.game.LevelManager.Level;
-import com.game.StateUpdate.DrawUpdatable;
 
 public class Enemy extends PhysicsSprite{
     Animation<Texture> right = new Animation<Texture>(.13f,new Texture("Enemy/Flopper/Right/F0.png"),new Texture("Enemy/Flopper/Right/F1.png"),new Texture("Enemy/Flopper/Right/F2.png"));
     Animation<Texture> left = new Animation<Texture>(.13f,new Texture("Enemy/Flopper/Left/F0.png"),new Texture("Enemy/Flopper/Left/F1.png"),new Texture("Enemy/Flopper/Left/F2.png"));
+    Animation<Texture> die = new Animation<Texture>(.1f, new Texture("Enemy/Die/F0.png"), new Texture("Enemy/Die/F1.png"), new Texture("Enemy/Die/F2.png"), new Texture("Enemy/Die/F3.png"), new Texture("Enemy/Die/F4.png"));
 
     public EnemySensorController sensorController = new EnemySensorController(this);
     Level lvl;
@@ -49,13 +48,20 @@ public class Enemy extends PhysicsSprite{
         shape.dispose();
     }
 
+    float elapsedDead = 0;
     @Override
     public void update(SpriteBatch batch) {
-        super.update(batch);
+        if (killed) {
+            elapsedDead += Gdx.graphics.getDeltaTime();
+            batch.draw(die.getKeyFrame(elapsedDead,false),(getX()+getWidth()/2)-die.getKeyFrame(0).getWidth()/2,getY());
+        }else {
+
+            super.update(batch);
         sensorController.updatePos(Position.BottemLeft);
         sensorController.updatePos(Position.BottemRight);
-        if(!lvl.ui.isPaused())
+        if (!lvl.ui.isPaused())
             move();
+    }
     }
 
     float elapsed = 0;
