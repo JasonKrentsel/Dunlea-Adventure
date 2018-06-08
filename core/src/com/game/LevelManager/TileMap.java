@@ -6,9 +6,11 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -30,6 +32,11 @@ public class TileMap {
     private Vector2 playerPos = new Vector2();
     private ArrayList<Vector2> enemyPos = new ArrayList<Vector2>();
 
+    private ArrayList<Rectangle> killZones = new ArrayList<Rectangle>();
+    private ArrayList<Rectangle> damageZones = new ArrayList<Rectangle>();
+    private ArrayList<Rectangle> endZones = new ArrayList<Rectangle>();
+    private ArrayList<Rectangle> floatZones = new ArrayList<Rectangle>();
+
     public TileMap(String filePath, World world) {
         map = new TmxMapLoader().load(filePath);
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -38,6 +45,7 @@ public class TileMap {
         mapSize.scl(96f);
         buildShapes(map,world);
         getEntityPoints(map);
+        getZones(map);
     }
 
     public void buildShapes(Map map, World world) {
@@ -68,6 +76,27 @@ public class TileMap {
         }
     }
 
+    private void getZones(Map map){
+        MapObjects objects = map.getLayers().get("Zones").getObjects();
+        for(MapObject obj : objects){
+            if(obj instanceof RectangleMapObject){
+                RectangleMapObject rec = (RectangleMapObject)obj;
+                if(rec.getName().equals("Kill")){
+                    killZones.add(rec.getRectangle());
+                }
+                else if(rec.getName().equals("End")){
+                    endZones.add(rec.getRectangle());
+                }
+                else if(rec.getName().equals("Damage")){
+                    damageZones.add(rec.getRectangle());
+                }
+                else if(rec.getName().equals("Float")){
+                    floatZones.add(rec.getRectangle());
+                }
+            }
+        }
+    }
+
     private static ChainShape getPolylineShape(PolylineMapObject polylineObject) {
         float[] vertices = polylineObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
@@ -81,6 +110,37 @@ public class TileMap {
         return chain;
     }
 
+    public boolean isInEndZone(Vector2 pos){
+        for(Rectangle rec : endZones){
+            if(rec.contains(pos))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInKillZone(Vector2 pos){
+        for(Rectangle rec : killZones){
+            if(rec.contains(pos))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInDamageZone(Vector2 pos){
+        for(Rectangle rec : damageZones){
+            if(rec.contains(pos))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInFloatZone(Vector2 pos){
+        for(Rectangle rec : floatZones){
+            if(rec.contains(pos))
+                return true;
+        }
+        return false;
+    }
     /**
      * Responsible for rendering the textured tiles of the tilemap onto the screen
      *

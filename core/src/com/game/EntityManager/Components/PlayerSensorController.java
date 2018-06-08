@@ -56,13 +56,13 @@ public class PlayerSensorController {
                 sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + player.getHeight() - 15, 1, 5);
                 break;
             case BottemLeft:
-                sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + 10, 1, 5);
+                sensorBoxes.get(position).set(player.getX() +4+11, player.getY() + 20, 1, 5);
                 break;
             case TopRight:
                 sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6-11, player.getY() + player.getHeight() - 15, 1, 5);
                 break;
             case BottemRight:
-                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6-11, player.getY() + 10, 1, 5);
+                sensorBoxes.get(position).set(player.getX() + player.getWidth() - 6-11, player.getY() + 20, 1, 5);
                 break;
         }
     }
@@ -72,6 +72,13 @@ public class PlayerSensorController {
         updatePos(position);
         rec = sensorBoxes.get(position);
         return sensor.inTile(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height));
+    }
+
+    public boolean isInEnemy(com.game.EntityManager.Sensor.Position position) {
+        Rectangle rec;
+        updatePos(position);
+        rec = sensorBoxes.get(position);
+        return sensor.inEnemy(new Vector2(rec.x, rec.y), new Vector2(rec.x + rec.width, rec.y + rec.height));
     }
 
     public Enemy isInEnemy() {

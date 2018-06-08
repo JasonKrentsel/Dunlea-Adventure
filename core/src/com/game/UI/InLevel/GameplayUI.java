@@ -32,7 +32,7 @@ public class GameplayUI implements Updatable{
     Skin skin = new Skin(new FileHandle("default/skin/uiskin.json"));
     BitmapFont font = new BitmapFont();
 
-    private boolean isPaused;
+    public boolean isPaused;
 
     public GameplayUI(GameMain game,Stage UIstage){
         stage = UIstage;

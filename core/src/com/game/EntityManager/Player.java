@@ -27,7 +27,8 @@ public class Player extends PhysicsSprite {
     private float jumpSpeed = 15;
     private float dropForce = 17;
     private float slideVelocity = 2;
-    private boolean immune = true;
+    private boolean immune = false;
+    public int health = 3;
     /**
      * various animations and textures for Dunlea in certain situations
      */
@@ -43,6 +44,9 @@ public class Player extends PhysicsSprite {
 
     private final Animation<Texture> punchRight = new Animation<Texture>(.08f,new Texture("dunlea/punchRight/F0.gif"),new Texture("dunlea/punchRight/F1.gif"),new Texture("dunlea/punchRight/F2.gif"));
     private final Animation<Texture> punchLeft = new Animation<Texture>(.08f,new Texture("dunlea/punchLeft/F0.gif"),new Texture("dunlea/punchLeft/F1.gif"),new Texture("dunlea/punchLeft/F2.gif"));
+    private final Texture dead = new Texture("dunlea/dead.png");
+    private final Texture deadRed = new Texture("dunlea/deadRed.png");
+    private final Texture backgroundDead = new Texture("dunlea/gameOver.png");
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
@@ -95,6 +99,15 @@ public class Player extends PhysicsSprite {
 
     float punchElapsed = 0;
     boolean isPunching;
+    float elapsedHurt = 3f;
+    Vector2 playPos = new Vector2();
+
+    float deadElapsed;
+    float deadY;
+    boolean deadDown = false;
+    float transperency = 0;
+    float yUp = -200;
+    public boolean isDead = false;
     /**
      * draws Dunlea's correct texture as well as:
      * updating elapsed time
@@ -105,38 +118,88 @@ public class Player extends PhysicsSprite {
      */
     @Override
     public void draw(Batch batch) {
-        punchElapsed += Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x<4){
-            punchElapsed = 0;
-            if(punchSensor.isInEnemy(isRight)!=null){
-                punchSensor.isInEnemy(isRight).kill();
+        if(health<=0){
+            isDead = true;
+            lvl.ui.isPaused = true;
+            deadElapsed += Gdx.graphics.getDeltaTime();
+            if(deadElapsed<2){
+                if(deadY < getY()+100 && !deadDown) {
+                    deadY += 2;
+                }else {
+                    deadDown = true;
+                }
+                if(deadDown && deadY > 200) {
+                    deadY -= 2;
+                }
+                batch.draw(dead,getMidpoint().x-dead.getWidth()/2,getY());
+            }
+            else{
+                if(transperency != 1) {
+                    transperency += .01;
+                }else{
+                    if(yUp<400)
+                    yUp += 1;
+                }
+                batch.draw(backgroundDead,0,0);
+                batch.draw(deadRed,GameMain.WIDTH/2-deadRed.getWidth()/2,yUp);
             }
         }
+        {
+            playPos.set(getX(), getY());
+            if (lvl.tileMap.isInDamageZone(playPos) && elapsedHurt > 2) {
+                hurt();
+            }
+            if (lvl.tileMap.isInEndZone(playPos)) {
+                // end level
+            }
+            if (lvl.tileMap.isInFloatZone(playPos)) {
+                if (body.getLinearVelocity().y < 15)
+                    body.applyForceToCenter(0, 100, true);
+            }
+            if (lvl.tileMap.isInKillZone(playPos)) {
+                hurt();
+                health = 0;
+            }
 
-        if(punchElapsed>.2 || inAir) {
-            super.draw(batch);
-            isPunching = false;
-        }else{
-            isPunching = true;
-            super.updateSprite();
-            if(isRight)
-                batch.draw(punchRight.getKeyFrame(elapsed,true),getX(),getY());
-            else
-                batch.draw(punchLeft.getKeyFrame(elapsed,true),getX()-20,getY());
-        }
+            elapsedHurt += Gdx.graphics.getDeltaTime();
+            if ((sensorController.isInEnemy(Position.Top) || sensorController.isInEnemy(Position.BottemRight) || sensorController.isInEnemy(Position.BottemLeft) || sensorController.isInEnemy(Position.TopRight) || sensorController.isInEnemy(Position.TopLeft)) && elapsedHurt > 2) {
+                elapsedHurt = 0;
+                health--;
+            }
+            immune = elapsedHurt < 2f;
+            punchElapsed += Gdx.graphics.getDeltaTime();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x < 6 && elapsedHurt > 2) {
+                punchElapsed = 0;
+                if (punchSensor.isInEnemy(isRight) != null) {
+                    punchSensor.isInEnemy(isRight).kill();
+                }
+            }
 
-        if(sensorController.isOnEnemy() && inAir){
-            sensorController.isInEnemy().kill();
-            body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
-            inAir = true;
-        }
+            if (punchElapsed > .2 || inAir) {
+                super.draw(batch);
+                isPunching = false;
+            } else {
+                isPunching = true;
+                super.updateSprite();
+                if (isRight)
+                    batch.draw(punchRight.getKeyFrame(elapsed, true), getX(), getY());
+                else
+                    batch.draw(punchLeft.getKeyFrame(elapsed, true), getX() - 20, getY());
+            }
 
-        if (getY() < -500) {
-            body.setLinearVelocity(0, 0);
-            body.setTransform((init.x + getWidth() / 2) / GameMain.PPM, (init.y + getHeight() / 2) / GameMain.PPM, 0);
+            if (sensorController.isOnEnemy() && inAir) {
+                sensorController.isInEnemy().kill();
+                body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
+                inAir = true;
+            }
+
+            if (getY() < -500) {
+                body.setLinearVelocity(0, 0);
+                body.setTransform((init.x + getWidth() / 2) / GameMain.PPM, (init.y + getHeight() / 2) / GameMain.PPM, 0);
+            }
+            elapsed += Gdx.graphics.getDeltaTime();
+            move();
         }
-        elapsed += Gdx.graphics.getDeltaTime();
-        move();
     }
 
     AABBSensor sensor = new AABBSensor(world);
@@ -155,6 +218,11 @@ public class Player extends PhysicsSprite {
     }
 
     State state;
+
+    private void hurt(){
+        elapsedHurt = 0;
+        health--;
+    }
 
     private void move() {
         if(!lvl.ui.isPaused()) {

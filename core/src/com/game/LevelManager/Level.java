@@ -32,7 +32,7 @@ public class Level implements Screen {
     SpriteBatch batch;
     public World world;
     Player p;
-    TileMap tileMap;
+    public TileMap tileMap;
     GameMain game;
 
     public GameplayUI ui;
@@ -86,8 +86,10 @@ public class Level implements Screen {
     public void show() {
         pX = p.getMidpoint().x;
         pY = p.getMidpoint().y;
-
+        sr.setAutoShapeType(true);
     }
+
+    ShapeRenderer sr = new ShapeRenderer();
 
     float pY;
     float pX;
@@ -97,29 +99,40 @@ public class Level implements Screen {
         Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        updateCamera();
-        tileMap.render(camera);
-        batch.begin();
-        for(DrawUpdatable sprite: spriteList){
-            sprite.update(batch);
-        }
-        batch.end();
-        for(Updatable u: updateList){
-            u.update();
-        }
+        if(!p.isDead) {
+            updateCamera();
+            tileMap.render(camera);
+            batch.begin();
+            for (DrawUpdatable sprite : spriteList) {
+                sprite.update(batch);
+            }
+            batch.end();
+            for (Updatable u : updateList) {
+                u.update();
+            }
 
-        // iterates the physics simulation
-        if(!ui.isPaused()) {
-            world.step(Gdx.graphics.getDeltaTime(), 6, 2);
-            for(int y = spriteList.size()-1; y >= 0 ; y--){
-                if(spriteList.get(y) instanceof Enemy){
-                    if(((Enemy)spriteList.get(y)).isDead() && !((Enemy)spriteList.get(y)).killed){
-                        ((Enemy)spriteList.get(y)).killed = true;
-                        ((Enemy)spriteList.get(y)).kill();
-                        world.destroyBody(((Enemy) spriteList.get(y)).body);
+            // iterates the physics simulation
+            if (!ui.isPaused()) {
+                world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+                for (int y = spriteList.size() - 1; y >= 0; y--) {
+                    if (spriteList.get(y) instanceof Enemy) {
+                        if (((Enemy) spriteList.get(y)).isDead() && !((Enemy) spriteList.get(y)).killed) {
+                            ((Enemy) spriteList.get(y)).killed = true;
+                            ((Enemy) spriteList.get(y)).kill();
+                            world.destroyBody(((Enemy) spriteList.get(y)).body);
+                        }
                     }
                 }
             }
+        }else{
+            tileMap.render(camera);
+            batch.begin();
+            for (DrawUpdatable sprite : spriteList) {
+                if(!(sprite instanceof Player))
+                    sprite.update(batch);
+            }
+            p.update(batch);
+            batch.end();
         }
     }
 
