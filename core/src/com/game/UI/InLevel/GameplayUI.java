@@ -15,11 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.game.GameMain;
+import com.game.LevelManager.Level;
 import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
 import com.game.UI.Menu.Actors.ThemedTextButton;
@@ -31,10 +33,11 @@ public class GameplayUI implements Updatable{
     GameMain game;
     Skin skin = new Skin(new FileHandle("default/skin/uiskin.json"));
     BitmapFont font = new BitmapFont();
-
+    Level level;
     public boolean isPaused;
 
-    public GameplayUI(GameMain game,Stage UIstage){
+    public GameplayUI(GameMain game,Stage UIstage, Level lvl){
+        level = lvl;
         stage = UIstage;
         this.game = game;
         Gdx.input.setInputProcessor(stage);
@@ -49,6 +52,10 @@ public class GameplayUI implements Updatable{
         ThemedTextButton exit = new ThemedTextButton("Exit");
         ThemedTextButton levelselect = new ThemedTextButton("Levels");
         ThemedTextButton mainMenu = new ThemedTextButton("MainMenu");
+
+     Table dead = new Table(skin);
+        ThemedTextButton restart = new ThemedTextButton("Restart");
+        ThemedTextButton goToLevelSelect = new ThemedTextButton("Level Select");
 
     ImageButton settingsButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/gear.png"))));
 
@@ -68,6 +75,17 @@ public class GameplayUI implements Updatable{
         pauseWindow.setWidth(resume.getWidth());
         stage.addActor(settingsButton);
         stage.addActor(pauseWindow);
+
+
+        restart.getLabel().setFontScale(3);
+        goToLevelSelect.getLabel().setFontScale(3);
+
+        dead.setFillParent(true);
+        dead.add(restart).width(restart.getWidth()*3).height(restart.getHeight()*3).padTop(300);
+        dead.row();
+        dead.add(goToLevelSelect).width(restart.getWidth()*3).height(restart.getHeight()*3);
+        dead.setVisible(false);
+        stage.addActor(dead);
     }
     /**
      * Buttons and stuff
@@ -107,6 +125,18 @@ public class GameplayUI implements Updatable{
             game.setScreen(new MainMenuScreen(game));
         }
 
+        if(restart.isPressed()){
+            game.setScreen(new Level(game,level.descriptor));
+        }
+        if(goToLevelSelect.isPressed()){
+            game.setScreen(new LevelSelector(game));
+        }
+
+        if(level.player.health<=0)
+            settingsButton.setVisible(false);
+        if(level.player.health<=0 && level.player.deadElapsed > 3){
+            dead.setVisible(true);
+        }
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }

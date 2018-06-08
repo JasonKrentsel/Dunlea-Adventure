@@ -70,30 +70,35 @@ public class TileMap {
         MapObject player = map.getLayers().get("Player").getObjects().get("Player");
         playerPos.set((Float)player.getProperties().get("x"),(Float)player.getProperties().get("y"));
 
-        MapObjects enemies = map.getLayers().get("Enemy").getObjects();
-        for(MapObject enemy : enemies){
-            enemyPos.add(new Vector2((Float)enemy.getProperties().get("x"),(Float)enemy.getProperties().get("y")));
+        try {
+            MapObjects enemies = map.getLayers().get("Enemy").getObjects();
+            for (MapObject enemy : enemies) {
+                enemyPos.add(new Vector2((Float) enemy.getProperties().get("x"), (Float) enemy.getProperties().get("y")));
+            }
+        }catch (Exception e){
+
         }
     }
 
     private void getZones(Map map){
-        MapObjects objects = map.getLayers().get("Zones").getObjects();
-        for(MapObject obj : objects){
-            if(obj instanceof RectangleMapObject){
-                RectangleMapObject rec = (RectangleMapObject)obj;
-                if(rec.getName().equals("Kill")){
-                    killZones.add(rec.getRectangle());
-                }
-                else if(rec.getName().equals("End")){
-                    endZones.add(rec.getRectangle());
-                }
-                else if(rec.getName().equals("Damage")){
-                    damageZones.add(rec.getRectangle());
-                }
-                else if(rec.getName().equals("Float")){
-                    floatZones.add(rec.getRectangle());
+        try {
+            MapObjects objects = map.getLayers().get("Zones").getObjects();
+            for (MapObject obj : objects) {
+                if (obj instanceof RectangleMapObject) {
+                    RectangleMapObject rec = (RectangleMapObject) obj;
+                    if (rec.getName().equals("Kill")) {
+                        killZones.add(rec.getRectangle());
+                    } else if (rec.getName().equals("End")) {
+                        endZones.add(rec.getRectangle());
+                    } else if (rec.getName().equals("Damage")) {
+                        damageZones.add(rec.getRectangle());
+                    } else if (rec.getName().equals("Float")) {
+                        floatZones.add(rec.getRectangle());
+                    }
                 }
             }
+        }catch (Exception e){
+
         }
     }
 

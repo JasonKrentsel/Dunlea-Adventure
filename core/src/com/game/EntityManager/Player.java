@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -46,7 +47,7 @@ public class Player extends PhysicsSprite {
     private final Animation<Texture> punchLeft = new Animation<Texture>(.08f,new Texture("dunlea/punchLeft/F0.gif"),new Texture("dunlea/punchLeft/F1.gif"),new Texture("dunlea/punchLeft/F2.gif"));
     private final Texture dead = new Texture("dunlea/dead.png");
     private final Texture deadRed = new Texture("dunlea/deadRed.png");
-    private final Texture backgroundDead = new Texture("dunlea/gameOver.png");
+    private final Sprite backgroundDead = new Sprite(new Texture("dunlea/gameOver.png"));
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
@@ -102,7 +103,7 @@ public class Player extends PhysicsSprite {
     float elapsedHurt = 3f;
     Vector2 playPos = new Vector2();
 
-    float deadElapsed;
+    public float deadElapsed;
     float deadY;
     boolean deadDown = false;
     float transperency = 0;
@@ -124,27 +125,27 @@ public class Player extends PhysicsSprite {
             deadElapsed += Gdx.graphics.getDeltaTime();
             if(deadElapsed<2){
                 if(deadY < getY()+100 && !deadDown) {
-                    deadY += 2;
+                    deadY += 5;
                 }else {
                     deadDown = true;
                 }
-                if(deadDown && deadY > 200) {
-                    deadY -= 2;
+                if(deadDown && deadY > -400) {
+                    deadY -= 5;
                 }
-                batch.draw(dead,getMidpoint().x-dead.getWidth()/2,getY());
+                batch.draw(dead,getMidpoint().x-dead.getWidth()/2,getY()+deadY);
             }
             else{
-                if(transperency != 1) {
-                    transperency += .01;
+                if(transperency <= 1) {
+                    transperency += .05;
                 }else{
-                    if(yUp<400)
-                    yUp += 1;
+                    if(yUp<500)
+                    yUp += 50;
                 }
-                batch.draw(backgroundDead,0,0);
-                batch.draw(deadRed,GameMain.WIDTH/2-deadRed.getWidth()/2,yUp);
+                backgroundDead.setPosition(lvl.pX-GameMain.WIDTH/2,lvl.pY-GameMain.HEIGHT/2);
+                backgroundDead.draw(batch,transperency);
             }
         }
-        {
+        else{
             playPos.set(getX(), getY());
             if (lvl.tileMap.isInDamageZone(playPos) && elapsedHurt > 2) {
                 hurt();
@@ -194,8 +195,7 @@ public class Player extends PhysicsSprite {
             }
 
             if (getY() < -500) {
-                body.setLinearVelocity(0, 0);
-                body.setTransform((init.x + getWidth() / 2) / GameMain.PPM, (init.y + getHeight() / 2) / GameMain.PPM, 0);
+                health = 0;
             }
             elapsed += Gdx.graphics.getDeltaTime();
             move();

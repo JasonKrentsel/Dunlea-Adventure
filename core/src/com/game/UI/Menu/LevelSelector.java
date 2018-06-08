@@ -43,7 +43,7 @@ public class LevelSelector implements Screen {
         levels.add(new LevelDescriptor("Test",new FileHandle("Levels/Tester/lvl.tmx")));
         levels.add(new LevelDescriptor("Tile test",new FileHandle("Levels/TileTest/map.tmx")));
         levels.add(new LevelDescriptor("It Continues", new FileHandle("Levels/L1/map.tmx")));
-
+        levels.add(new LevelDescriptor("Etheral", new FileHandle("Levels/Etheral/map.tmx")));
         for (int x = 0; x < levels.size(); x++) {
             buttons.add(new ThemedTextButton(levels.get(x).name));
             buttons.get(x).getLabel().setFontScale(2,2);

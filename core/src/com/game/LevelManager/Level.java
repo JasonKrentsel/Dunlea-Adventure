@@ -31,11 +31,13 @@ public class Level implements Screen {
     OrthographicCamera camera = new OrthographicCamera(GameMain.WIDTH, GameMain.HEIGHT);
     SpriteBatch batch;
     public World world;
-    Player p;
+    public Player player;
     public TileMap tileMap;
     GameMain game;
 
     public GameplayUI ui;
+
+    public LevelDescriptor descriptor;
 
     ArrayList<DrawUpdatable> spriteList = new ArrayList<DrawUpdatable>();
     ArrayList<Updatable> updateList = new ArrayList<Updatable>();
@@ -44,7 +46,7 @@ public class Level implements Screen {
         this.batch = game.batch;
         this.game = game;
 
-        ui = new GameplayUI(game,new Stage());
+        ui = new GameplayUI(game, new Stage(), this);
 
         // setting camera up
         camera.position.set(GameMain.WIDTH / 2, GameMain.HEIGHT / 2, 0);
@@ -53,17 +55,18 @@ public class Level implements Screen {
         world = new World(new Vector2(0, -9.8f * 3f), true);
         tileMap = new TileMap(mapTmx.path(), world);
         // creating player
-        p = new Player(this, tileMap.getPlayerPos().x, tileMap.getPlayerPos().y);
+        player = new Player(this, tileMap.getPlayerPos().x, tileMap.getPlayerPos().y);
 
-        spriteList.add(p);
+        spriteList.add(player);
         updateList.add(ui);
     }
 
-    public Level(GameMain game, LevelDescriptor levelDescription){
+    public Level(GameMain game, LevelDescriptor levelDescription) {
+        descriptor = levelDescription;
         this.batch = game.batch;
         this.game = game;
 
-        ui = new GameplayUI(game,new Stage());
+        ui = new GameplayUI(game, new Stage(),this);
 
         // setting camera up
         camera.position.set(GameMain.WIDTH / 2, GameMain.HEIGHT / 2, 0);
@@ -72,88 +75,80 @@ public class Level implements Screen {
         world = new World(new Vector2(0, -9.8f * 3f), true);
         tileMap = new TileMap(levelDescription.tmxLocation.path(), world);
         // creating player
-        p = new Player(this, tileMap.getPlayerPos().x, tileMap.getPlayerPos().y);
+        player = new Player(this, tileMap.getPlayerPos().x, tileMap.getPlayerPos().y);
 
-        spriteList.add(p);
+        spriteList.add(player);
         updateList.add(ui);
 
-        for(int x = 0 ; x < tileMap.getEnemyPositions().size() ; x++){
-            spriteList.add(new Enemy(this,world,tileMap.getEnemyPositions().get(x).x,tileMap.getEnemyPositions().get(x).y));
+        for (int x = 0; x < tileMap.getEnemyPositions().size(); x++) {
+            spriteList.add(new Enemy(this, world, tileMap.getEnemyPositions().get(x).x, tileMap.getEnemyPositions().get(x).y));
         }
     }
 
     @Override
     public void show() {
-        pX = p.getMidpoint().x;
-        pY = p.getMidpoint().y;
+        pX = player.getMidpoint().x;
+        pY = player.getMidpoint().y;
         sr.setAutoShapeType(true);
     }
 
     ShapeRenderer sr = new ShapeRenderer();
 
-    float pY;
-    float pX;
+    public float pY;
+    public float pX;
+
     @Override
     public void render(float delta) {
         // needed to clear each frame and have a default background color
         Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        updateCamera();
+        tileMap.render(camera);
 
-        if(!p.isDead) {
-            updateCamera();
-            tileMap.render(camera);
-            batch.begin();
-            for (DrawUpdatable sprite : spriteList) {
+        batch.begin();
+        for (DrawUpdatable sprite : spriteList) {
+            if (!(sprite instanceof Player))
                 sprite.update(batch);
-            }
-            batch.end();
-            for (Updatable u : updateList) {
-                u.update();
-            }
+        }
+        player.update(batch);
+        batch.end();
+        for (Updatable u : updateList) {
+            u.update();
+        }
 
-            // iterates the physics simulation
-            if (!ui.isPaused()) {
-                world.step(Gdx.graphics.getDeltaTime(), 6, 2);
-                for (int y = spriteList.size() - 1; y >= 0; y--) {
-                    if (spriteList.get(y) instanceof Enemy) {
-                        if (((Enemy) spriteList.get(y)).isDead() && !((Enemy) spriteList.get(y)).killed) {
-                            ((Enemy) spriteList.get(y)).killed = true;
-                            ((Enemy) spriteList.get(y)).kill();
-                            world.destroyBody(((Enemy) spriteList.get(y)).body);
-                        }
-                    }
+        // iterates the physics simulation
+        if (!ui.isPaused()) {
+            world.step(Gdx.graphics.getDeltaTime(), 10, 10);
+        }
+        for (int y = spriteList.size() - 1; y >= 0; y--) {
+            if (spriteList.get(y) instanceof Enemy) {
+                if (((Enemy) spriteList.get(y)).isDead() && !((Enemy) spriteList.get(y)).killed) {
+                    ((Enemy) spriteList.get(y)).killed = true;
+                    ((Enemy) spriteList.get(y)).kill();
+                    world.destroyBody(((Enemy) spriteList.get(y)).body);
                 }
             }
-        }else{
-            tileMap.render(camera);
-            batch.begin();
-            for (DrawUpdatable sprite : spriteList) {
-                if(!(sprite instanceof Player))
-                    sprite.update(batch);
-            }
-            p.update(batch);
-            batch.end();
         }
     }
 
-    private void updateCamera(){
-        if(p.getMidpoint().x < GameMain.WIDTH/2){
-            pX = GameMain.WIDTH/2;
-        }else if(p.getMidpoint().x > tileMap.mapSize.x-GameMain.WIDTH/2){
-            pX = tileMap.mapSize.x-GameMain.WIDTH/2;
-        }else{
-            pX = p.getMidpoint().x;
+    private void updateCamera() {
+        if (player.getMidpoint().x < GameMain.WIDTH / 2) {
+            pX = GameMain.WIDTH / 2;
+        } else if (player.getMidpoint().x > tileMap.mapSize.x - GameMain.WIDTH / 2) {
+            pX = tileMap.mapSize.x - GameMain.WIDTH / 2;
+        } else {
+            pX = player.getMidpoint().x;
         }
 
-        if(p.getMidpoint().y < GameMain.HEIGHT/2){
-            pY = GameMain.HEIGHT/2;
-        }else if(p.getMidpoint().y > tileMap.mapSize.y-GameMain.HEIGHT/2){
-            pY = tileMap.mapSize.y-GameMain.HEIGHT/2;
-        }else{
-            pY = p.getMidpoint().y;
+        if (player.getMidpoint().y < GameMain.HEIGHT / 2) {
+            pY = GameMain.HEIGHT / 2;
+        } else if (player.getMidpoint().y > tileMap.mapSize.y - GameMain.HEIGHT / 2) {
+            pY = tileMap.mapSize.y - GameMain.HEIGHT / 2;
+        } else {
+            pY = player.getMidpoint().y;
         }
 
-        camera.position.lerp(new Vector3(pX,pY,0),.1f);
+        camera.position.lerp(new Vector3(pX, pY, 0), .1f);
         batch.setProjectionMatrix(camera.combined);
         camera.update(true);
     }
