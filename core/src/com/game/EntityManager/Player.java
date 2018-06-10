@@ -30,6 +30,7 @@ public class Player extends PhysicsSprite {
     private float slideVelocity = 2;
     private boolean immune = false;
     public int health = 3;
+    public boolean ended = false;
     /**
      * various animations and textures for Dunlea in certain situations
      */
@@ -119,86 +120,90 @@ public class Player extends PhysicsSprite {
      */
     @Override
     public void draw(Batch batch) {
-        if(health<=0){
-            isDead = true;
+        if(lvl.tileMap.isInEndZone(new Vector2(getX(),getY()))){
             lvl.ui.isPaused = true;
-            deadElapsed += Gdx.graphics.getDeltaTime();
-            if(deadElapsed<2){
-                if(deadY < getY()+100 && !deadDown) {
-                    deadY += 5;
-                }else {
-                    deadDown = true;
-                }
-                if(deadDown && deadY > -400) {
-                    deadY -= 5;
-                }
-                batch.draw(dead,getMidpoint().x-dead.getWidth()/2,getY()+deadY);
-            }
-            else{
-                if(transperency <= 1) {
-                    transperency += .05;
-                }else{
-                    if(yUp<500)
-                    yUp += 50;
-                }
-                backgroundDead.setPosition(lvl.pX-GameMain.WIDTH/2,lvl.pY-GameMain.HEIGHT/2);
-                backgroundDead.draw(batch,transperency);
-            }
-        }
-        else{
-            playPos.set(getX(), getY());
-            if (lvl.tileMap.isInDamageZone(playPos) && elapsedHurt > 2) {
-                hurt();
-            }
-            if (lvl.tileMap.isInEndZone(playPos)) {
-                // end level
-            }
-            if (lvl.tileMap.isInFloatZone(playPos)) {
-                if (body.getLinearVelocity().y < 15)
-                    body.applyForceToCenter(0, 100, true);
-            }
-            if (lvl.tileMap.isInKillZone(playPos)) {
-                hurt();
-                health = 0;
-            }
+            ended = true;
+        }else {
 
-            elapsedHurt += Gdx.graphics.getDeltaTime();
-            if ((sensorController.isInEnemy(Position.Top) || sensorController.isInEnemy(Position.BottemRight) || sensorController.isInEnemy(Position.BottemLeft) || sensorController.isInEnemy(Position.TopRight) || sensorController.isInEnemy(Position.TopLeft)) && elapsedHurt > 2) {
-                elapsedHurt = 0;
-                health--;
-            }
-            immune = elapsedHurt < 2f;
-            punchElapsed += Gdx.graphics.getDeltaTime();
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x < 6 && elapsedHurt > 2) {
-                punchElapsed = 0;
-                if (punchSensor.isInEnemy(isRight) != null) {
-                    punchSensor.isInEnemy(isRight).kill();
+            if (health <= 0) {
+                isDead = true;
+                lvl.ui.isPaused = true;
+                deadElapsed += Gdx.graphics.getDeltaTime();
+                if (deadElapsed < 2) {
+                    if (deadY < getY() + 100 && !deadDown) {
+                        deadY += 5;
+                    } else {
+                        deadDown = true;
+                    }
+                    if (deadDown && deadY > -400) {
+                        deadY -= 5;
+                    }
+                    batch.draw(dead, getMidpoint().x - dead.getWidth() / 2, getY() + deadY);
+                } else {
+                    if (transperency <= 1) {
+                        transperency += .05;
+                    } else {
+                        if (yUp < 500)
+                            yUp += 50;
+                    }
+                    backgroundDead.setPosition(lvl.pX - GameMain.WIDTH / 2, lvl.pY - GameMain.HEIGHT / 2);
+                    backgroundDead.draw(batch, transperency);
                 }
-            }
-
-            if (punchElapsed > .2 || inAir) {
-                super.draw(batch);
-                isPunching = false;
             } else {
-                isPunching = true;
-                super.updateSprite();
-                if (isRight)
-                    batch.draw(punchRight.getKeyFrame(elapsed, true), getX(), getY());
-                else
-                    batch.draw(punchLeft.getKeyFrame(elapsed, true), getX() - 20, getY());
-            }
+                playPos.set(getX(), getY());
+                if (lvl.tileMap.isInDamageZone(playPos) && elapsedHurt > 2) {
+                    hurt();
+                }
+                if (lvl.tileMap.isInEndZone(playPos)) {
+                    // end level
+                }
+                if (lvl.tileMap.isInFloatZone(playPos)) {
+                    if (body.getLinearVelocity().y < 15)
+                        body.applyForceToCenter(0, 100, true);
+                }
+                if (lvl.tileMap.isInKillZone(playPos)) {
+                    hurt();
+                    health = 0;
+                }
 
-            if (sensorController.isOnEnemy() && inAir) {
-                sensorController.isInEnemy().kill();
-                body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
-                inAir = true;
-            }
+                elapsedHurt += Gdx.graphics.getDeltaTime();
+                if ((sensorController.isInEnemy(Position.Top) || sensorController.isInEnemy(Position.BottemRight) || sensorController.isInEnemy(Position.BottemLeft) || sensorController.isInEnemy(Position.TopRight) || sensorController.isInEnemy(Position.TopLeft)) && elapsedHurt > 2) {
+                    elapsedHurt = 0;
+                    health--;
+                }
+                immune = elapsedHurt < 2f;
+                punchElapsed += Gdx.graphics.getDeltaTime();
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x < 6 && elapsedHurt > 2) {
+                    punchElapsed = 0;
+                    if (punchSensor.isInEnemy(isRight) != null) {
+                        punchSensor.isInEnemy(isRight).kill();
+                    }
+                }
 
-            if (getY() < -500) {
-                health = 0;
+                if (punchElapsed > .2 || inAir) {
+                    super.draw(batch);
+                    isPunching = false;
+                } else {
+                    isPunching = true;
+                    super.updateSprite();
+                    if (isRight)
+                        batch.draw(punchRight.getKeyFrame(elapsed, true), getX(), getY());
+                    else
+                        batch.draw(punchLeft.getKeyFrame(elapsed, true), getX() - 20, getY());
+                }
+
+                if (sensorController.isOnEnemy() && inAir) {
+                    sensorController.isInEnemy().kill();
+                    body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
+                    inAir = true;
+                }
+
+                if (getY() < -500) {
+                    health = 0;
+                }
+                elapsed += Gdx.graphics.getDeltaTime();
+                move();
             }
-            elapsed += Gdx.graphics.getDeltaTime();
-            move();
         }
     }
 

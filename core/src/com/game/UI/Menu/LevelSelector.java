@@ -15,23 +15,32 @@ import com.game.GameMain;
 import com.game.LevelManager.Level;
 import com.game.LevelManager.LevelDescriptor;
 import com.game.UI.Menu.Actors.ThemedTextButton;
+
 import java.util.ArrayList;
 
 public class LevelSelector implements Screen {
-    ArrayList<LevelDescriptor> levels = new ArrayList<LevelDescriptor>();
+    public static ArrayList<LevelDescriptor> levels = new ArrayList<LevelDescriptor>();
+    public static int levelId = -1;
+    static {
+        levels.add(new LevelDescriptor("Test", new FileHandle("Levels/Tester/lvl.tmx")));
+        levels.add(new LevelDescriptor("Tile test", new FileHandle("Levels/TileTest/map.tmx")));
+        levels.add(new LevelDescriptor("It Continues", new FileHandle("Levels/L1/map.tmx")));
+        levels.add(new LevelDescriptor("Etheral", new FileHandle("Levels/Etheral/map.tmx")));
+    }
+
     ArrayList<ThemedTextButton> buttons = new ArrayList<ThemedTextButton>();
     /**
      * GUI
      */
     Stage stage;
     GameMain game;
-    Skin skin = new Skin(new FileHandle("default/skin/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     //scroll planes
     ScrollPane levelList;
     Table table = new Table(skin);
     ThemedTextButton back = new ThemedTextButton("Return to MainMenu");
 
-    public LevelSelector(GameMain game){
+    public LevelSelector(GameMain game) {
         this.game = game;
     }
 
@@ -40,26 +49,22 @@ public class LevelSelector implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        levels.add(new LevelDescriptor("Test",new FileHandle("Levels/Tester/lvl.tmx")));
-        levels.add(new LevelDescriptor("Tile test",new FileHandle("Levels/TileTest/map.tmx")));
-        levels.add(new LevelDescriptor("It Continues", new FileHandle("Levels/L1/map.tmx")));
-        levels.add(new LevelDescriptor("Etheral", new FileHandle("Levels/Etheral/map.tmx")));
         for (int x = 0; x < levels.size(); x++) {
             buttons.add(new ThemedTextButton(levels.get(x).name));
-            buttons.get(x).getLabel().setFontScale(2,2);
-            table.add(buttons.get(x)).width(buttons.get(x).getWidth()*2).height(buttons.get(x).getHeight()*2).padBottom(5);
+            buttons.get(x).getLabel().setFontScale(2, 2);
+            table.add(buttons.get(x)).width(buttons.get(x).getWidth() * 2).height(buttons.get(x).getHeight() * 2).padBottom(5);
             table.row();
         }
 
         levelList = new ScrollPane(table, skin);
-        levelList.setBounds(0,0, GameMain.realRes.x,GameMain.realRes.y);
+        levelList.setBounds(0, 0, GameMain.realRes.x, GameMain.realRes.y);
 
         stage.addActor(levelList);
 
         Table t = new Table();
         t.setFillParent(true);
         t.top().right();
-        t.add(back).width(back.getWidth()*1.2f).height(back.getHeight()*1.2f).padTop(10).padRight(10);
+        t.add(back).width(back.getWidth() * 1.2f).height(back.getHeight() * 1.2f).padTop(10).padRight(10);
         stage.addActor(t);
     }
 
@@ -68,13 +73,14 @@ public class LevelSelector implements Screen {
         Gdx.gl.glClearColor(.22f, .05f, .33f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        for(int x = 0 ; x < buttons.size() ; x++){
-            if(buttons.get(x).isPressed()){
-                game.setScreen(new Level(game,levels.get(x)));
+        for (int x = 0; x < buttons.size(); x++) {
+            if (buttons.get(x).isPressed()) {
+                levelId = x;
+                game.setScreen(new Level(game, levels.get(x)));
             }
         }
 
-        if(back.isPressed()){
+        if (back.isPressed()) {
             game.setScreen(new MainMenuScreen(game));
         }
 
