@@ -22,7 +22,9 @@ public class LevelSelector implements Screen {
     public static ArrayList<LevelDescriptor> levels = new ArrayList<LevelDescriptor>();
     public static int levelId = -1;
     static {
+        levels.add(new LevelDescriptor("Tutorial", new FileHandle("Levels/tutorial/map.tmx")));
         levels.add(new LevelDescriptor("It Continues", new FileHandle("Levels/L1/map.tmx")));
+        levels.add(new LevelDescriptor("Descent",new FileHandle("Levels/sub/map.tmx")));
         levels.add(new LevelDescriptor("Etheral", new FileHandle("Levels/Etheral/map.tmx")));
     }
 
