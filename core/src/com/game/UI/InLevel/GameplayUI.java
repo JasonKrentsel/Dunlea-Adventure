@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.game.GameMain;
+import com.game.LevelManager.EndScreen;
 import com.game.LevelManager.Level;
 import com.game.StateUpdate.DrawUpdatable;
 import com.game.StateUpdate.Updatable;
@@ -31,7 +32,7 @@ import com.game.UI.Menu.MainMenuScreen;
 public class GameplayUI implements Updatable {
     Stage stage;
     GameMain game;
-    Skin skin = new Skin(new FileHandle("default/skin/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("default/skin/uiskin.json"));
     BitmapFont font = new BitmapFont();
     Level level;
     public boolean isPaused;
@@ -92,7 +93,12 @@ public class GameplayUI implements Updatable {
         dead.setVisible(false);
         stage.addActor(dead);
 
-        if (LevelSelector.levelId < LevelSelector.levels.size() - 1){
+        if (LevelSelector.levelId < LevelSelector.levels.size()-1){
+            endFrame.add(nextLevel).width(nextLevel.getWidth() * 3).height(nextLevel.getHeight() * 3).getActor().getLabel().setFontScale(3);
+            endFrame.row();
+        }
+        if(LevelSelector.levelId == LevelSelector.levels.size()-1){
+            nextLevel.getLabel().setText("Next Level ???");
             endFrame.add(nextLevel).width(nextLevel.getWidth() * 3).height(nextLevel.getHeight() * 3).getActor().getLabel().setFontScale(3);
             endFrame.row();
         }
@@ -153,9 +159,13 @@ public class GameplayUI implements Updatable {
             game.setScreen(new LevelSelector(game));
         }
 
-        if (nextLevel.isPressed()) {
-            game.setScreen(new Level(game, LevelSelector.levels.get(LevelSelector.levelId + 1)));
-            LevelSelector.levelId++;
+        if (nextLevel.isPressed() && nextLevel.getLabel().getText().toString().equals("Next Level")) {
+            LevelSelector.incrementLevelId();
+            game.setScreen(new Level(game, LevelSelector.levels.get(LevelSelector.levelId)));
+        }
+
+        if(nextLevel.isPressed() && nextLevel.getLabel().getText().toString().equals("Next Level ???")){
+            game.setScreen(new EndScreen(game));
         }
 
         if (level.player.health <= 0)

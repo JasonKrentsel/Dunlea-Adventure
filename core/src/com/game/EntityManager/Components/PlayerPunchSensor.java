@@ -33,9 +33,9 @@ public class PlayerPunchSensor {
 
     public void updatePos(Boolean isRight) {
         if(isRight)
-        right.set(player.getX()-30,player.getY()+player.getHeight()/2-15,40,20);
+        right.set(player.getX()-50,player.getY()+player.getHeight()/2-15,60,20);
         else
-        left.set(player.getX()+player.getWidth()-10,player.getY()+player.getHeight()/2-15,40,20);
+        left.set(player.getX()+player.getWidth()-10,player.getY()+player.getHeight()/2-15,60,20);
     }
 
 

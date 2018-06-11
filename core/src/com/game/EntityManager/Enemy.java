@@ -1,6 +1,7 @@
 package com.game.EntityManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,7 @@ public class Enemy extends PhysicsSprite{
     Animation<Texture> right = new Animation<Texture>(.13f,new Texture("Enemy/Flopper/Right/F0.png"),new Texture("Enemy/Flopper/Right/F1.png"),new Texture("Enemy/Flopper/Right/F2.png"));
     Animation<Texture> left = new Animation<Texture>(.13f,new Texture("Enemy/Flopper/Left/F0.png"),new Texture("Enemy/Flopper/Left/F1.png"),new Texture("Enemy/Flopper/Left/F2.png"));
     Animation<Texture> die = new Animation<Texture>(.1f, new Texture("Enemy/Die/F0.png"), new Texture("Enemy/Die/F1.png"), new Texture("Enemy/Die/F2.png"), new Texture("Enemy/Die/F3.png"), new Texture("Enemy/Die/F4.png"));
+    Sound death = Gdx.audio.newSound(Gdx.files.internal("Enemy/die.wav"));
 
     public EnemySensorController sensorController = new EnemySensorController(this);
     Level lvl;
@@ -88,6 +90,7 @@ public class Enemy extends PhysicsSprite{
     public boolean killed = false;
 
     public void kill(){
+        death.play();
         dead = true;
     }
 

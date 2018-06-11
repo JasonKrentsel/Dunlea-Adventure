@@ -2,6 +2,7 @@ package com.game.UI.Menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -33,8 +34,9 @@ public class MainMenuScreen implements Screen {
     private ThemedTextButton exitButton;
     Animation<Texture> background = new Animation<Texture>(.2f, new Texture("Menu/TitleScreen/F0.gif"), new Texture("Menu/TitleScreen/F1.gif"), new Texture("Menu/TitleScreen/F2.gif"), new Texture("Menu/TitleScreen/F3.gif"), new Texture("Menu/TitleScreen/F4.gif"), new Texture("Menu/TitleScreen/F5.gif"), new Texture("Menu/TitleScreen/F6.gif"), new Texture("Menu/TitleScreen/F7.gif"));
     GameMain game;
+    Music music = Gdx.audio.newMusic(Gdx.files.internal("Menu/MenuTheme.mp3"));
 
-    public MainMenuScreen(GameMain game){
+    public MainMenuScreen(GameMain game) {
         this.batch = game.batch;
         this.game = game;
         atlas = new TextureAtlas("default/skin/uiskin.atlas");
@@ -53,6 +55,10 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        music.setLooping(true);
+        if (!music.isPlaying())
+            music.play();
+
         //Stage should control input:
         Gdx.input.setInputProcessor(stage);
 
@@ -69,10 +75,10 @@ public class MainMenuScreen implements Screen {
 
         //Add buttons to table
         playButton.getLabel().setFontScale(2);
-        mainTable.add(playButton).padBottom(10).width(playButton.getWidth()*2).height(playButton.getHeight()*2);
+        mainTable.add(playButton).padBottom(10).width(playButton.getWidth() * 2).height(playButton.getHeight() * 2);
         mainTable.row();
         exitButton.getLabel().setFontScale(2);
-        mainTable.add(exitButton).padBottom(80).width(exitButton.getWidth()*2).height(exitButton.getHeight()*2);
+        mainTable.add(exitButton).padBottom(80).width(exitButton.getWidth() * 2).height(exitButton.getHeight() * 2);
 
         //Add to the stage
         stage.addActor(mainTable);
@@ -80,22 +86,25 @@ public class MainMenuScreen implements Screen {
     }
 
     float elapsed = 0;
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(.22f, .05f, .33f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        elapsed+=Gdx.graphics.getDeltaTime();
+        elapsed += Gdx.graphics.getDeltaTime();
 
-        if(playButton.isPressed()){
+        if (playButton.isPressed()) {
+            music.dispose();
             game.setScreen(new LevelSelector(game));
         }
-        if(exitButton.isPressed()){
+        if (exitButton.isPressed()) {
+            music.dispose();
             Gdx.app.exit();
         }
 
         batch.begin();
-        batch.draw(background.getKeyFrame(elapsed,true),0,0);
+        batch.draw(background.getKeyFrame(elapsed, true), 0, 0);
         batch.end();
 
         stage.act();

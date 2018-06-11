@@ -100,7 +100,7 @@ public class Level implements Screen {
     @Override
     public void render(float delta) {
         // needed to clear each frame and have a default background color
-        Gdx.gl.glClearColor(.3f, 0.3f, .5f, 1);
+        Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         updateCamera();
         tileMap.render(camera);

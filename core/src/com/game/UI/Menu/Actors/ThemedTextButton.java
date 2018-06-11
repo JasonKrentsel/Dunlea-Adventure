@@ -1,6 +1,7 @@
 package com.game.UI.Menu.Actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ThemedTextButton extends TextButton {
     public static final BitmapFont font = new BitmapFont((Gdx.files.internal("Menu/Font/font.fnt")));
+    public static final Sound hover = Gdx.audio.newSound(Gdx.files.internal("Menu/buttonPress.wav"));
 
     public ThemedTextButton(String text) {
         super(text, new TextButtonStyle(new TextureRegionDrawable(new TextureRegion(new Texture("Menu/button.png"))),null,null,font));
@@ -28,6 +30,7 @@ public class ThemedTextButton extends TextButton {
         addListener(new InputListener(){
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                hover.play(.5f);
                 setStyle(s);
             }
             @Override

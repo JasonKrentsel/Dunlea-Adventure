@@ -2,6 +2,7 @@ package com.game.EntityManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -44,17 +45,23 @@ public class Player extends PhysicsSprite {
     private final Texture jumpLeft = new Texture("dunlea/jump/jumpLeft.png");
     private final Texture invis = new Texture("dunlea/invis.png");
 
-    private final Animation<Texture> punchRight = new Animation<Texture>(.08f,new Texture("dunlea/punchRight/F0.gif"),new Texture("dunlea/punchRight/F1.gif"),new Texture("dunlea/punchRight/F2.gif"));
-    private final Animation<Texture> punchLeft = new Animation<Texture>(.08f,new Texture("dunlea/punchLeft/F0.gif"),new Texture("dunlea/punchLeft/F1.gif"),new Texture("dunlea/punchLeft/F2.gif"));
+    private final Animation<Texture> punchRight = new Animation<Texture>(.08f, new Texture("dunlea/punchRight/F0.gif"), new Texture("dunlea/punchRight/F1.gif"), new Texture("dunlea/punchRight/F2.gif"));
+    private final Animation<Texture> punchLeft = new Animation<Texture>(.08f, new Texture("dunlea/punchLeft/F0.gif"), new Texture("dunlea/punchLeft/F1.gif"), new Texture("dunlea/punchLeft/F2.gif"));
     private final Texture dead = new Texture("dunlea/dead.png");
     private final Texture deadRed = new Texture("dunlea/deadRed.png");
     private final Sprite backgroundDead = new Sprite(new Texture("dunlea/gameOver.png"));
+
+    private final Sound hurt = Gdx.audio.newSound(Gdx.files.internal("dunlea/sound/hurt.wav"));
+    private final Sound punch = Gdx.audio.newSound(Gdx.files.internal("dunlea/sound/punch.wav"));
+    private final Sound jump = Gdx.audio.newSound(Gdx.files.internal("dunlea/sound/Jump.wav"));
+    private final Sound fall = Gdx.audio.newSound(Gdx.files.internal("dunlea/sound/fall.wav"));
 
     private float elapsed = 0;                                      // elapsed time used for animation timing
     Vector2 init = new Vector2();
     public PlayerSensorController sensorController = new PlayerSensorController(this);           // pointer to the sensor states that are passed to and edited by the CollisionManager
     private Level lvl;
     public PlayerPunchSensor punchSensor = new PlayerPunchSensor(this);
+
     /**
      * Creates player with Sensors.
      * Initializes the sprite with Dunlea's right-side idle frame 0 texture.
@@ -110,6 +117,7 @@ public class Player extends PhysicsSprite {
     float transperency = 0;
     float yUp = -200;
     public boolean isDead = false;
+
     /**
      * draws Dunlea's correct texture as well as:
      * updating elapsed time
@@ -120,12 +128,13 @@ public class Player extends PhysicsSprite {
      */
     @Override
     public void draw(Batch batch) {
-        if(lvl.tileMap.isInEndZone(new Vector2(getX(),getY()))){
+        if (lvl.tileMap.isInEndZone(new Vector2(getX(), getY()))) {
             lvl.ui.isPaused = true;
             ended = true;
-        }else {
-
+        } else {
             if (health <= 0) {
+                if (!isDead)
+                    fall.play();
                 isDead = true;
                 lvl.ui.isPaused = true;
                 deadElapsed += Gdx.graphics.getDeltaTime();
@@ -168,12 +177,12 @@ public class Player extends PhysicsSprite {
 
                 elapsedHurt += Gdx.graphics.getDeltaTime();
                 if ((sensorController.isInEnemy(Position.Top) || sensorController.isInEnemy(Position.BottemRight) || sensorController.isInEnemy(Position.BottemLeft) || sensorController.isInEnemy(Position.TopRight) || sensorController.isInEnemy(Position.TopLeft)) && elapsedHurt > 2) {
-                    elapsedHurt = 0;
-                    health--;
+                    hurt();
                 }
                 immune = elapsedHurt < 2f;
                 punchElapsed += Gdx.graphics.getDeltaTime();
                 if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && punchElapsed > .2 && !inAir && body.getLinearVelocity().x < 6 && elapsedHurt > 2) {
+                    punch.play();
                     punchElapsed = 0;
                     if (punchSensor.isInEnemy(isRight) != null) {
                         punchSensor.isInEnemy(isRight).kill();
@@ -207,8 +216,6 @@ public class Player extends PhysicsSprite {
         }
     }
 
-    AABBSensor sensor = new AABBSensor(world);
-
     /**
      * Change Dunlea's velocity based on user's input
      */
@@ -224,13 +231,14 @@ public class Player extends PhysicsSprite {
 
     State state;
 
-    private void hurt(){
+    private void hurt() {
         elapsedHurt = 0;
         health--;
+        hurt.play();
     }
 
     private void move() {
-        if(!lvl.ui.isPaused()) {
+        if (!lvl.ui.isPaused()) {
             /**
              * Left and Right Movement
              */
@@ -275,21 +283,24 @@ public class Player extends PhysicsSprite {
             if (Gdx.input.isKeyPressed(Input.Keys.W) && Gdx.input.isKeyPressed(Input.Keys.S)) {
 
             } else if (Gdx.input.isKeyPressed(Input.Keys.W) && sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem) && !((sensorController.isInTile(com.game.EntityManager.Sensor.Position.TopLeft) && Gdx.input.isKeyPressed(Input.Keys.A)) || (sensorController.isInTile(com.game.EntityManager.Sensor.Position.TopRight) && Gdx.input.isKeyPressed(Input.Keys.D)))) {
+                jump.play(.2f);
                 body.setLinearVelocity(body.getLinearVelocity().x, jumpSpeed);
                 inAir = true;
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) && !sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem)) {
-                body.applyForceToCenter(0f,-dropForce,true);
+                body.applyForceToCenter(0f, -dropForce, true);
                 inAir = true;
             } else if (sensorController.isInTile(com.game.EntityManager.Sensor.Position.Bottem)) {
                 inAir = false;
             } else {
                 inAir = true;
             }
-            if(!isPunching)
+            if (!isPunching)
                 chooseTexture();
         }
     }
+
     float elapsedFlash = 0;
+
     private void chooseTexture() {
         switch (state) {
             case Slide:
@@ -317,11 +328,11 @@ public class Player extends PhysicsSprite {
             else
                 setTexture(jumpLeft);
         }
-        if(immune){
-            elapsedFlash+=Gdx.graphics.getDeltaTime();
-            float x = elapsedFlash-(int)elapsedFlash;
-            int y = (int)(x*100);
-            if(y%3==0)
+        if (immune) {
+            elapsedFlash += Gdx.graphics.getDeltaTime();
+            float x = elapsedFlash - (int) elapsedFlash;
+            int y = (int) (x * 100);
+            if (y % 3 == 0)
                 setTexture(invis);
         }
     }

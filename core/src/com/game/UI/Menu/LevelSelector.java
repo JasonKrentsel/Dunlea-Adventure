@@ -22,8 +22,6 @@ public class LevelSelector implements Screen {
     public static ArrayList<LevelDescriptor> levels = new ArrayList<LevelDescriptor>();
     public static int levelId = -1;
     static {
-        levels.add(new LevelDescriptor("Test", new FileHandle("Levels/Tester/lvl.tmx")));
-        levels.add(new LevelDescriptor("Tile test", new FileHandle("Levels/TileTest/map.tmx")));
         levels.add(new LevelDescriptor("It Continues", new FileHandle("Levels/L1/map.tmx")));
         levels.add(new LevelDescriptor("Etheral", new FileHandle("Levels/Etheral/map.tmx")));
     }
@@ -111,5 +109,9 @@ public class LevelSelector implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    public static void incrementLevelId(){
+        levelId=levelId+1;
     }
 }
